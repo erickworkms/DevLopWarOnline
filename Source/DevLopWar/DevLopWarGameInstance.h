@@ -3,7 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LobbyController.h"
 #include "Engine/GameInstance.h"
+#include "OnlineSessionSettings.h"
+#include "OnlineSubsystem.h"
 #include "DevLopWarGameInstance.generated.h"
 
 /**
@@ -19,4 +22,9 @@ public:
 	FString token;
 	UPROPERTY(BlueprintReadWrite)
 	FString NomeJogador;
+	UPROPERTY(BlueprintReadWrite)
+	ALobbyController* ControleLobby;
+	
+	FOnlineSessionSettings SessionSettings;
+	IOnlineSessionPtr SessionInt;
 };

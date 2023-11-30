@@ -32,4 +32,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void HandlePlayerJoined(APlayerController* PlayerController);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RemoveJogador(APlayerController* PlayerController);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void EnviaMensagemChat(const FString& nome,const FString& mensagem);
 };

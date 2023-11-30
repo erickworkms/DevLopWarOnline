@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DevLopWarGameInstance.h"
 #include "GameFramework/GameModeBase.h"
 #include "Huds/BaseHudMenuPrincipal.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "LobbyGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerJoinedDelegate, APlayerController*, NovoJogador);
@@ -20,8 +22,11 @@ class DEVLOPWAR_API ALobbyGameMode : public AGameModeBase
 	ALobbyGameMode();
 
 public:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(Replicated,BlueprintReadWrite)
 	TArray<APlayerController*> JogadoresSala;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FSala> GeraDados;
 	
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
@@ -38,6 +43,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void VerEntradaLogin();
 	
+	UFUNCTION(BlueprintCallable,Server, Reliable)
+	void EnviarMensagemChat(const FString& mensagem);
+
+	UFUNCTION(BlueprintCallable,Server, Reliable, WithValidation)
+	void DesconectaCliente(APlayerController* PlayerController,int32 Id);
+
 	UFUNCTION(BlueprintCallable)
-	void EnviarMensagemChat(FString mensagem);
+	void ExcluirSala(APlayerController* Jogador);
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+private:
+	FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
+	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
+	UPROPERTY()
+	UDevLopWarGameInstance* SeuGameInstance;
 };

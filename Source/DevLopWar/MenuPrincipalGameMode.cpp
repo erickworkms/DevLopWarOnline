@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MenuPrincipalGameMode.h"
+
+#include "DevLopWarGameInstance.h"
 #include "GameFramework/HUD.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
@@ -23,13 +25,19 @@ AMenuPrincipalGameMode::AMenuPrincipalGameMode()
 void AMenuPrincipalGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	APlayerController* DefaultPlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	APlayerController* Controle = UGameplayStatics::GetPlayerController(this, 0);
 
-	if (DefaultPlayerController)
+	if (Controle)
 	{
-		DefaultPlayerController->bShowMouseCursor = true;
-		DefaultPlayerController->DefaultMouseCursor = EMouseCursor::Crosshairs;
+		Controle->bShowMouseCursor = true;
+		Controle->DefaultMouseCursor = EMouseCursor::Crosshairs;
+		SeuGameInstance = Cast<UDevLopWarGameInstance>(GetWorld()->GetGameInstance());
 	}
+}
+
+void AMenuPrincipalGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
 void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscolhido,FString NomeSala)
@@ -41,9 +49,8 @@ void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscol
 
 		if (SessionInt.IsValid())
 		{
-			FOnlineSessionSettings SessionSettings;
 			// Configurações da sala, como nome, mapa, etc.
-			SessionSettings.bIsLANMatch = false;
+			SessionSettings.bIsLANMatch = true;
 			SessionSettings.bUsesPresence = true;
 			SessionSettings.NumPublicConnections = NumeroJogador;
 			SessionSettings.NumPrivateConnections = 0;
@@ -53,6 +60,7 @@ void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscol
 			SessionSettings.bAllowJoinViaPresence = true;
 			SessionSettings.bAllowJoinViaPresenceFriendsOnly = false;
 			SessionSettings.Settings.Add(FName(TEXT("SessionName")), FVariantData(NomeSala));
+			SessionSettings.Set(NAME_GameSession, FString(NomeSala));
 			switch (CenarioEscolhido)
 			{
 			case 0:
@@ -68,16 +76,10 @@ void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscol
 				SessionSettings.Set(SETTING_MAPNAME, FString("/Game/Mapas/MapaJogavel"));
 				break;
 			}
-	
 
-			FString teste;
-			FString teste2;
-			SessionSettings.Get(SETTING_MAPNAME,teste);
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Este é o teste com nome de mapa :"+teste);
-			SessionSettings.Get(FName(TEXT("SessionName")),teste2);
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Este é o teste com nome SessionName :"+teste2);
-			//SessionInt->TriggerOnSessionUserInviteAcceptedDelegates(0, TEXT("CustomEventName"), FOnlineSessionSearchResult());
 			SessionInt->CreateSession(0, FName(*NomeSala), SessionSettings);
+			SeuGameInstance->SessionSettings = SessionSettings;
+			SeuGameInstance->SessionInt = SessionInt;
 			GetWorld()->ServerTravel("/Game/Mapas/SalaEsperaPartida?listen");
 		}
 	}
@@ -205,7 +207,7 @@ void AMenuPrincipalGameMode::HandleJoinSession(UNetConnection* Conexao)
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "achou a conexao com o controle");
 	// Obtém o nome do cenário que o servidor deseja carregar
-	FString MapName = "192.168.64.1"; // Substitua com o nome do seu cenário
+	FString MapName = "192.168.15.180"; // Substitua com o nome do seu cenário
 
 	// Inicia a transição para o novo cenário no cliente
 	PlayerController->ClientTravel(MapName, ETravelType::TRAVEL_Absolute);

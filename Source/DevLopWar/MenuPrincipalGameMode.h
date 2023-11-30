@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DevLopWarGameInstance.h"
 #include "GameFramework/GameModeBase.h"
 #include "OnlineSessionSettings.h"
 #include "Estruturas/Struct.h"
@@ -51,12 +52,18 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:
+	UPROPERTY()
+	UDevLopWarGameInstance* SeuGameInstance;
+	
 	FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
 	
 	FOnJoinSessionCompleteDelegate OnJoinSessionCompleteDelegate;
 	FDelegateHandle OnJoinSessionCompleteDelegateHandle;
 	
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
-	TArray<FOnlineSessionSearchResult> FoundSessions; 
+	TArray<FOnlineSessionSearchResult> FoundSessions;
+	FOnlineSessionSettings SessionSettings;
 };
