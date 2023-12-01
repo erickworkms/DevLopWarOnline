@@ -68,7 +68,7 @@ public:
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	TEnumAsByte<TipoAcao> Acao = Nada;
 	UPROPERTY(Replicated,EditAnywhere, Category="Personagem")
-	TEnumAsByte<TipoPersonagem> PersonagemNPC = Chefe;
+	TEnumAsByte<TipoPersonagem> PersonagemNPC = Senior;
 
 	UAnimBlueprint* Estagiario_Anim;
 	UAnimBlueprint* Pleno_Anim;

@@ -21,7 +21,8 @@ ALobbyGameMode::ALobbyGameMode()
 	{
 		HUDClass = PlayerHUDClass.Class;
 	}
-	//PlayerControllerClass = ALobbyController::StaticClass();
+	//DefaultPawnClass = ADevLopWarCharacter::StaticClass();
+	PlayerControllerClass = ALobbyController::StaticClass();
 	PlayerStateClass = ADevOpPlayerState::StaticClass();
 	bReplicates = true;
 }
@@ -43,6 +44,7 @@ void ALobbyGameMode::BeginPlay()
 void ALobbyGameMode::PostLogin(APlayerController* NovoJogador)
 {
 	Super::PostLogin(NovoJogador);
+	JogadoresSala.Add(NovoJogador);
 	OnPlayerJoined.Broadcast(NovoJogador);
 }
 
@@ -53,9 +55,38 @@ void ALobbyGameMode::IniciaPartida()
 
 void ALobbyGameMode::VerEntradaLogin()
 {
-	OnPlayerJoined.AddDynamic(hudDetectada, &ABaseHudMenuPrincipal::HandlePlayerJoined);
+	OnPlayerJoined.AddDynamic(this, &ALobbyGameMode::HandlePlayerJoined);
 }
 
+void ALobbyGameMode::HandlePlayerJoined(APlayerController* PlayerController)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		for (int i=0;i < JogadoresSala.Num();i++)
+		{
+			if (IsValid(JogadoresSala[i]) && JogadoresSala[i] != PlayerController)
+			{
+				ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[i]);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou o player controller"+Controle->GetName());
+				Controle->VerEntradaLogin();
+			}
+			else if (IsValid(JogadoresSala[i]) && JogadoresSala[i] == PlayerController)
+			{
+				ValorIndexUsuarioAtraso = i;
+				GetWorldTimerManager().SetTimer(Contador, this, &ALobbyGameMode::TimerHud, 0.25f,false);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"é IGUAL");
+			}
+		}
+	}
+}
+
+void ALobbyGameMode::TimerHud()
+{
+	ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[ValorIndexUsuarioAtraso]);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"passou denovo no login");
+	Controle->VerEntradaLogin();
+	GetWorldTimerManager().ClearTimer(Contador);
+}
 
 void ALobbyGameMode::DesconectaCliente_Implementation(APlayerController* PlayerController, int32 Id)
 {
@@ -79,7 +110,7 @@ bool ALobbyGameMode::DesconectaCliente_Validate(APlayerController* PlayerControl
 	return false;
 }
 
-void ALobbyGameMode::ExcluirSala(APlayerController* Jogador)
+void ALobbyGameMode::ExcluirSala()
 {
 	if (SeuGameInstance->SessionInt.IsValid())
 	{
@@ -101,23 +132,21 @@ void ALobbyGameMode::EnviarMensagemChat_Implementation(const FString& mensagem)
 	check(World);
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		APlayerController* DefaultPlayerController = UGameplayStatics::GetPlayerController(this, 0);
-		ADevOpPlayerState* PlayerStateProprio = Cast<ADevOpPlayerState>(DefaultPlayerController->PlayerState);
-		if (IsValid(PlayerStateProprio))
-		{
-			if (IsValid(PlayerStateProprio->hudDetectada))
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou" + DefaultPlayerController->GetName() +" "+PlayerStateProprio->hudDetectada->GetName());
-				PlayerStateProprio->hudDetectada->EnviaMensagemChat(DefaultPlayerController->GetName(),mensagem);
-			}
-		}
+		// APlayerController* ControleDefault = UGameplayStatics::GetPlayerController(this, 0);
+		// ALobbyController* ControleLobby = Cast<ALobbyController>(ControleDefault);
+		// if (IsValid(ControleLobby->HudChat))
+		// {
+		// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou" + ControleLobby->GetName() +" "+ControleLobby->HudChat->GetName());
+		// 		ControleLobby->HudChat->EnviaMensagemChat(mensagem);
+		// }
 		for (int i = 0; i < JogadoresSala.Num();i++)
 		{
 			if (IsValid(JogadoresSala[i]))
 			{
-				ADevOpPlayerState* PlayerState = Cast<ADevOpPlayerState>(JogadoresSala[i]->PlayerState);
-				if (IsValid(PlayerState->hudDetectada))
+				ALobbyController* PlayerState = Cast<ALobbyController>(JogadoresSala[i]);
+				if (IsValid(PlayerState))
 				{
+					PlayerState->EnviarMensagem(JogadoresSala[i]->GetName(),mensagem);
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou" + JogadoresSala[i]->GetName() +" "+PlayerState->GetName());
 				}
 			}
@@ -127,20 +156,14 @@ void ALobbyGameMode::EnviarMensagemChat_Implementation(const FString& mensagem)
 		// 	if (APlayerController* PlayerController = Cast<APlayerController>(*it))
 		// 		if (IsValid(PlayerController))
 		// 		{
-		// 			ADevOpPlayerState* PlayerState = Cast<ADevOpPlayerState>(PlayerController->PlayerState);
-		// 			if (IsValid(PlayerState))
-		// 			{
-		//
-		//
-		// 				if (IsValid(PlayerState->hudDetectada))
+		// 			ALobbyController* PlayerState = Cast<ALobbyController>(PlayerController);
+		// 				if (IsValid(PlayerState->HudChat))
 		// 				{
 		// 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,
 		// 							 "Este é o teste com nome de mapa :" + PlayerController->
 		// 							 GetName() + PlayerState->GetName());
-		// 					PlayerState->hudDetectada->EnviaMensagemChat(PlayerController->GetName(),mensagem);
-		// 				}
-		// 				// 
-		// 			}
+		// 					PlayerState->HudChat->EnviaMensagemChat(PlayerController->GetName(),mensagem);
+		// 				}					
 		// 		}
 		// }
 	}

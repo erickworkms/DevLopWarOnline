@@ -9,16 +9,3 @@ ABaseHudMenuPrincipal::ABaseHudMenuPrincipal()
 {
 
 }
-
-void ABaseHudMenuPrincipal::CriaSalaHost()
-{
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MapaJogavel"));
-}
-
-void ABaseHudMenuPrincipal::ProcuraSalaHost()
-{
-}
-
-void ABaseHudMenuPrincipal::ConectaSalaHost()
-{
-}

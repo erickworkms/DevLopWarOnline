@@ -17,13 +17,17 @@ class DEVLOPWAR_API ALobbyController : public APlayerController
 
 public:
 	ALobbyController();
-	UFUNCTION()
-	void EnviarMensagem();
+	UFUNCTION(Reliable,Client)
+	void EnviarMensagem(const FString& nome,const FString& mensagem);
 
-	UPROPERTY(BlueprintReadWrite)
+	UFUNCTION(Reliable,Client)
+	void VerEntradaLogin();
+
+	UPROPERTY(Replicated,BlueprintReadWrite)
 	ABaseHudMenuPrincipal* HudChat;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
+
 };

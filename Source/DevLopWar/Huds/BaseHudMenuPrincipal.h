@@ -17,10 +17,7 @@ class DEVLOPWAR_API ABaseHudMenuPrincipal : public AHUD
 
 	ABaseHudMenuPrincipal();
 public:
-	void CriaSalaHost();
-	void ProcuraSalaHost();
-	void ConectaSalaHost();
-
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnFindSessionsComplete(bool bWasSuccessful);
 
@@ -29,13 +26,13 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RetornoDadosLogin(bool Conectou,FHttpResponseData RespostasDados);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void HandlePlayerJoined(APlayerController* PlayerController);
-
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void RemoveJogador(APlayerController* PlayerController);
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void EnviaMensagemChat(const FString& nome,const FString& mensagem);
+	void EnviaMensagemChat(const FString& mensagem);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AdicionaHudSalas();
 };

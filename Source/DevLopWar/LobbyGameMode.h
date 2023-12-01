@@ -22,15 +22,15 @@ class DEVLOPWAR_API ALobbyGameMode : public AGameModeBase
 	ALobbyGameMode();
 
 public:
-	UPROPERTY(Replicated,BlueprintReadWrite)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	TArray<APlayerController*> JogadoresSala;
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FSala> GeraDados;
-	
+
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
-	
+
 	virtual void BeginPlay() override;
 
 	FOnPlayerJoinedDelegate OnPlayerJoined;
@@ -42,15 +42,26 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void VerEntradaLogin();
-	
-	UFUNCTION(BlueprintCallable,Server, Reliable)
+
+	UFUNCTION()
+	void HandlePlayerJoined(APlayerController* PlayerController);
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void EnviarMensagemChat(const FString& mensagem);
 
-	UFUNCTION(BlueprintCallable,Server, Reliable, WithValidation)
-	void DesconectaCliente(APlayerController* PlayerController,int32 Id);
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
+	void DesconectaCliente(APlayerController* PlayerController, int32 Id);
 
 	UFUNCTION(BlueprintCallable)
-	void ExcluirSala(APlayerController* Jogador);
+	void ExcluirSala();
+	
+	UFUNCTION()
+	void TimerHud();
+
+	UPROPERTY()
+	int ValorIndexUsuarioAtraso=0;
+
+	FTimerHandle Contador;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

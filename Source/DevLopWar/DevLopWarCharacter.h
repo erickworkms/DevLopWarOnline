@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Huds/BaseHudMenuPrincipal.h"
 #include "DevLopWarCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -29,6 +30,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	UPROPERTY(BlueprintReadWrite)
+	ABaseHudMenuPrincipal* hudDetectada;
+
+	UFUNCTION()
+	void EnviarMensagem(const FString& mensagem);
+	
 protected:
 
 	/** Resets HMD orientation in VR. */
