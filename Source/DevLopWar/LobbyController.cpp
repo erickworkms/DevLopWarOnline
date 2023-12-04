@@ -3,12 +3,25 @@
 
 #include "LobbyController.h"
 #include "DevOpPlayerState.h"
+#include "LobbyGameMode.h"
 #include "Net/UnrealNetwork.h"
 
-void ALobbyController::EnviarMensagem_Implementation(const FString& nome,const FString& mensagem)
+void ALobbyController::EnviarMensagemServer_Implementation(const FString& nome, const FString& mensagem)
+{
+	if (HasAuthority()) // Verifica se este é o servidor
+	{
+		ALobbyGameMode* GameMode = GetWorld()->GetAuthGameMode<ALobbyGameMode>();
+		if (GameMode != nullptr)
+		{
+			GameMode->EnviarMensagemChat(mensagem);
+		}
+	}
+}
+
+void ALobbyController::EnviarMensagemCliente_Implementation(const FString& nome, const FString& mensagem)
 {
 	HudChat->EnviaMensagemChat(mensagem);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"funcionou no cliente");
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "funcionou no cliente");
 }
 
 void ALobbyController::SetupInputComponent()
@@ -30,15 +43,14 @@ void ALobbyController::BeginPlay()
 void ALobbyController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(ALobbyController,HudChat);
+	DOREPLIFETIME(ALobbyController, HudChat);
 }
 
-void ALobbyController::VerEntradaLogin_Implementation()
+void ALobbyController::VerEntradaLogin_Implementation(const TArray<FString>& JogadoresSalaNome)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou o player controller"+GetName());
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "detectou o player controller" + GetName());
 	if (IsValid(HudChat))
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou o player controller"+HudChat->GetName());
-		HudChat->AdicionaHudSalas();
+		HudChat->AdicionaHudSalas(JogadoresSalaNome);
 	}
 }

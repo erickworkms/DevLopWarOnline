@@ -34,5 +34,5 @@ public:
 	void EnviaMensagemChat(const FString& mensagem);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void AdicionaHudSalas();
+	void AdicionaHudSalas(const TArray<FString>& JogadoresNomes);
 };

@@ -10,7 +10,6 @@
 #include "Delegates/DelegateSignatureImpl.inl"
 #include "Delegates/DelegateSignatureImpl.inl"
 #include "Kismet/GameplayStatics.h"
-#include "Huds/BaseHudMenuPrincipal.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Net/UnrealNetwork.h"
 
@@ -45,6 +44,8 @@ void ALobbyGameMode::PostLogin(APlayerController* NovoJogador)
 {
 	Super::PostLogin(NovoJogador);
 	JogadoresSala.Add(NovoJogador);
+	ALobbyController* Controle = Cast<ALobbyController>(NovoJogador);
+	JogadoresSalaNome.Add(Controle->GetName());
 	OnPlayerJoined.Broadcast(NovoJogador);
 }
 
@@ -68,7 +69,7 @@ void ALobbyGameMode::HandlePlayerJoined(APlayerController* PlayerController)
 			{
 				ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[i]);
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou o player controller"+Controle->GetName());
-				Controle->VerEntradaLogin();
+				Controle->VerEntradaLogin(JogadoresSalaNome);
 			}
 			else if (IsValid(JogadoresSala[i]) && JogadoresSala[i] == PlayerController)
 			{
@@ -83,8 +84,7 @@ void ALobbyGameMode::HandlePlayerJoined(APlayerController* PlayerController)
 void ALobbyGameMode::TimerHud()
 {
 	ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[ValorIndexUsuarioAtraso]);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"passou denovo no login");
-	Controle->VerEntradaLogin();
+	Controle->VerEntradaLogin(JogadoresSalaNome);
 	GetWorldTimerManager().ClearTimer(Contador);
 }
 
@@ -93,6 +93,17 @@ void ALobbyGameMode::DesconectaCliente_Implementation(APlayerController* PlayerC
 	if (IsValid(JogadoresSala[Id]) && GetLocalRole() == ROLE_Authority)
 	{
 		JogadoresSala[Id]->ClientTravel("/Game/Mapas/TelaInicial", ETravelType::TRAVEL_Absolute);
+		JogadoresSala.RemoveAt(Id);
+		JogadoresSalaNome.RemoveAt(Id);
+	}
+	for (int i=0;i < JogadoresSala.Num();i++)
+	{
+		if (IsValid(JogadoresSala[i]))
+		{
+			ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[i]);
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou o player controller"+Controle->GetName());
+			Controle->VerEntradaLogin(JogadoresSalaNome);
+		}
 	}
 }
 
@@ -124,6 +135,7 @@ void ALobbyGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ALobbyGameMode,JogadoresSala);
+	DOREPLIFETIME(ALobbyGameMode,JogadoresSalaNome);
 }
 
 void ALobbyGameMode::EnviarMensagemChat_Implementation(const FString& mensagem)
@@ -146,7 +158,7 @@ void ALobbyGameMode::EnviarMensagemChat_Implementation(const FString& mensagem)
 				ALobbyController* PlayerState = Cast<ALobbyController>(JogadoresSala[i]);
 				if (IsValid(PlayerState))
 				{
-					PlayerState->EnviarMensagem(JogadoresSala[i]->GetName(),mensagem);
+					PlayerState->EnviarMensagemCliente(JogadoresSala[i]->GetName(),mensagem);
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou" + JogadoresSala[i]->GetName() +" "+PlayerState->GetName());
 				}
 			}

@@ -17,11 +17,14 @@ class DEVLOPWAR_API ALobbyController : public APlayerController
 
 public:
 	ALobbyController();
-	UFUNCTION(Reliable,Client)
-	void EnviarMensagem(const FString& nome,const FString& mensagem);
+	UFUNCTION(BlueprintCallable,Reliable,Server)
+	void EnviarMensagemServer(const FString& nome,const FString& mensagem);
 
 	UFUNCTION(Reliable,Client)
-	void VerEntradaLogin();
+	void EnviarMensagemCliente(const FString& nome,const FString& mensagem);
+	
+	UFUNCTION(Reliable,Client)
+	void VerEntradaLogin(const TArray<FString>& JogadoresSalaNome);
 
 	UPROPERTY(Replicated,BlueprintReadWrite)
 	ABaseHudMenuPrincipal* HudChat;

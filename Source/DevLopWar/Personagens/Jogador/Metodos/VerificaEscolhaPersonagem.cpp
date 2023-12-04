@@ -2,7 +2,7 @@
 
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 
-void AJogador_Base::VerificaEscolhaPersonagem()
+void AJogador_Base::VerificaEscolhaPersonagem_Implementation()
 {
 	switch (PersonagemNPC)
 	{

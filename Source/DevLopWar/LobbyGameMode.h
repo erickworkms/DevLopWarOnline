@@ -25,6 +25,9 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	TArray<APlayerController*> JogadoresSala;
 
+	UPROPERTY(Replicated,BlueprintReadOnly)
+	TArray<FString> JogadoresSalaNome;
+
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FSala> GeraDados;
 

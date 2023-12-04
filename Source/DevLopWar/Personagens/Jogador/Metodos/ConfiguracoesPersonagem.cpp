@@ -16,7 +16,7 @@ void AJogador_Base::DefinePadroes()
 	CaminhoArma = TEXT("SkeletalMesh'/Game/Personagens/Arma/Arma.Arma'");
 }
 
-void AJogador_Base::VerificaMeshPersonagem(float Index)
+void AJogador_Base::VerificaMeshPersonagem_Implementation(float Index)
 {
 	GetMesh()->SetSkeletalMesh(
 		Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(),NULL, *MeshesPlayer[Index])));

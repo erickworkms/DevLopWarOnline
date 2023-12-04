@@ -67,8 +67,8 @@ public:
 	TEnumAsByte<TipoEstado> Estado = NoChaoAndando;
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	TEnumAsByte<TipoAcao> Acao = Nada;
-	UPROPERTY(Replicated,EditAnywhere, Category="Personagem")
-	TEnumAsByte<TipoPersonagem> PersonagemNPC = Senior;
+	UPROPERTY(Replicated,BlueprintReadWrite,EditAnywhere, Category="Personagem")
+	TEnumAsByte<TipoPersonagem> PersonagemNPC = Estagiario;
 
 	UAnimBlueprint* Estagiario_Anim;
 	UAnimBlueprint* Pleno_Anim;
@@ -91,6 +91,13 @@ public:
 
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	FRotator RotacaoSocketArma;
+
+	UFUNCTION(BlueprintCallable,Reliable,Client)
+	void VerificaEscolhaPersonagem();
+	
+	UFUNCTION(BlueprintCallable,Reliable,Client)
+	void VerificaMeshPersonagem(float Index);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -139,8 +146,6 @@ protected:
 	void CriaProjetil();
 	UFUNCTION(Reliable,Server)
 	void CriaProjetilServidor(FVector Local,FRotator Rotacao);
-	void VerificaEscolhaPersonagem();
-	void VerificaMeshPersonagem(float Index);
 
 public:
 
