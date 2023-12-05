@@ -1,3 +1,7 @@
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
+
 #include "Components/SkeletalMeshComponent.h"
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 #include "DevLopWar/Personagens/Jogador/Projeteis/ProjetilCMais.h"
@@ -36,9 +40,6 @@ void AJogador_Base::CriaProjetilServidor_Implementation(FVector Local,FRotator R
 		VelocidadeTiro = 0.2;
 		ProjetilPleno = GetWorld()->SpawnActor<AProjetilCsharp>(Local, Rotacao);
 		ProjetilPleno->DonoProjetil = this;
-		
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-									  + "personagem" + GetName() +"  "+ "Atirou");
 		break;
 	case Senior:
 		QuantidadeDano = 5;

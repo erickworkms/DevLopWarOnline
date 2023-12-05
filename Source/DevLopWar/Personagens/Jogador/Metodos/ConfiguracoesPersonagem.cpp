@@ -1,10 +1,11 @@
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
 
-#include "Components/BoxComponent.h"
+//This project was created for the purpose of disseminating knowledge and can be used freely.
+
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 
 void AJogador_Base::DefinePadroes()
@@ -16,14 +17,13 @@ void AJogador_Base::DefinePadroes()
 	CaminhoArma = TEXT("SkeletalMesh'/Game/Personagens/Arma/Arma.Arma'");
 }
 
-void AJogador_Base::VerificaMeshPersonagem_Implementation(float Index)
+void AJogador_Base::VerificaMeshPersonagem(float Index)
 {
 	GetMesh()->SetSkeletalMesh(
 		Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(),NULL, *MeshesPlayer[Index])));
 	Arma->SetSkeletalMesh(
 		Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(),NULL, *CaminhoArma)));
 }
-
 void AJogador_Base::CriaPersonagemConfig()
 {
 	SetReplicates(true);
@@ -89,6 +89,4 @@ void AJogador_Base::CriaPersonagemConfig()
 	                        FAttachmentTransformRules::SnapToTargetIncludingScale, "MaoDirSoquete");
 	Arma->SetRelativeLocationAndRotation(FVector(0, 0, 0),
 	                                     FRotator(0, 0, 0), false, false);
-
-
 }

@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
 
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 #include "Jogador_AnimBlueprint.h"
 #include "Jogador_Base.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetStringLibrary.h"
 
 
 void UJogador_AnimBlueprint::CalculaDirecao(APawn* PersonagemBase)
@@ -28,6 +28,7 @@ UJogador_AnimBlueprint::UJogador_AnimBlueprint()
 {
 	Vida = 100.f;
 	Velocidade = 0.f;
+	Mira = .0f;
 }
 
 void UJogador_AnimBlueprint::NativeInitializeAnimation()

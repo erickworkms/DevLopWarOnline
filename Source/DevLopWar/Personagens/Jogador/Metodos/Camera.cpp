@@ -1,9 +1,10 @@
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
 
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
-#include "Kismet/KismetStringLibrary.h"
 
 void AJogador_Base::VirarCameraFrente(float valor)
 {
@@ -55,9 +56,6 @@ void AJogador_Base::VirarCameraLado(float valor)
 	{
 		if (Mirar)
 		{
-			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-			// 							 FString::SanitizeFloat(
-			// 							 	FVector::DotProduct(GetActorRightVector(), LocalReferenciaCamera->GetComponentToWorld().GetLocation() - GetActorLocation())) + "Angulo x" + GetName());
 			
 			if (AnguloCameraX < 200 && valor < 0)
 			{
@@ -72,13 +70,7 @@ void AJogador_Base::VirarCameraLado(float valor)
 		}
 		else if (!Mirar)
 		{
-			// if (FVector::DotProduct(GetActorRightVector(), Alvo - GetActorLocation()) > 0)
-			// {
-			// 	AnguloAlvo *= -1;
-			// }
-			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-			// 								 FString::SanitizeFloat(FVector::DotProduct(GetActorRightVector(), Alvo - GetActorLocation())) + "Angulo x" + GetName());
-			//
+			
 			AddControllerYawInput(valor);
 		}
 	}
@@ -197,7 +189,5 @@ void AJogador_Base::CriaCameraConfig()
 		LocalReferenciaCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 		LocalReferenciaCamera->SetIsReplicated(true);
 	}
-
-	//Take control of the default Player
 	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 }

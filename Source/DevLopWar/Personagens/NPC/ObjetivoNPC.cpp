@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 
 
 #include "ObjetivoNPC.h"
 
-// Sets default values
 AObjetivoNPC::AObjetivoNPC()
 {
 	LocalReferenciaNPC = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ReferenciaCamera"));
@@ -19,18 +20,3 @@ AObjetivoNPC::AObjetivoNPC()
 
 	SetReplicates(true);
 }
-
-// Called when the game starts or when spawned
-void AObjetivoNPC::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AObjetivoNPC::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

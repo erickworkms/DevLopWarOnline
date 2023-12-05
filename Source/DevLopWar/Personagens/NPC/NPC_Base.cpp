@@ -1,4 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
+
 #include "NPC_Base.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -24,9 +27,6 @@ void ANPC_Base::BeginPlay()
 	VariaveisIA_BlackBoard = UAIBlueprintHelperLibrary::GetBlackboard(GetController());
 	ControleNPC = Cast<AIAControle>(GetController());
 	VerificaLocalPatrulha();
-	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-	// 							  + "personagem" + GetName() +"  "+ ControleNPC->GetName());
-	//VerificaCaminhoPatrulha();
 }
 
 // Called every frame
@@ -67,7 +67,6 @@ void ANPC_Base::VerificaVida_Implementation()
 	}
 }
 
-// Called to bind functionality to input
 void ANPC_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

@@ -1,18 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 
 
 #include "Jogador_Base.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/SkeletalMeshComponent.h"
 
-// Sets default values
 AJogador_Base::AJogador_Base()
 {
 	CriaPersonagemConfig();
 	CriaCameraConfig();
 }
 
-// Called when the game starts or when spawned
 void AJogador_Base::BeginPlay()
 {
 	Super::BeginPlay();
@@ -20,15 +20,11 @@ void AJogador_Base::BeginPlay()
 	VerificaEscolhaPersonagem();
 }
 
-// Called every frame
 void AJogador_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	DefineEstadoAtual();
 	DefinePadroesVel(DeltaTime);
-	// FRotator CameraRotacaoInicio = CameraPrincipal->GetSocketRotation("none") - FRotator::ZeroRotator;
-	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-	// 										 FString::SanitizeFloat(CameraRotacaoInicio.Yaw) + "Angulo x" + GetName());
 }
 
 // Called to bind functionality to input
@@ -55,10 +51,6 @@ void AJogador_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	                                 &AJogador_Base::Interagir_Pressionado);
 	PlayerInputComponent->BindAction(TEXT("Interagir"), IE_Released, this,
 	                                 &AJogador_Base::Interagir_Solto);
-}
-
-void AJogador_Base::ResetaAcoes()
-{
 }
 
 void AJogador_Base::OnConstruction(const FTransform& Transform)
@@ -100,4 +92,13 @@ void AJogador_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AJogador_Base, SpringArm);
 	DOREPLIFETIME(AJogador_Base, LocalSocketArma);
 	DOREPLIFETIME(AJogador_Base, RotacaoSocketArma);
+	
+	DOREPLIFETIME(AJogador_Base, Estagiario_Anim);
+	DOREPLIFETIME(AJogador_Base, Pleno_Anim);
+	DOREPLIFETIME(AJogador_Base, Senior_Anim);
+	DOREPLIFETIME(AJogador_Base, Chefe_Anim);
+	
+	DOREPLIFETIME(AJogador_Base, MeshesPlayer);
+	DOREPLIFETIME(AJogador_Base, AnimacaoPlayer);
+	DOREPLIFETIME(AJogador_Base, CaminhoArma);
 }

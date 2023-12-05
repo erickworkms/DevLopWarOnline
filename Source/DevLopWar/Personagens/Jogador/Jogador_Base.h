@@ -1,4 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 
 #pragma once
 
@@ -31,8 +33,11 @@ public:
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	FTimerHandle ProjetilTemporizador;
 
+	UPROPERTY(Replicated,meta = (AllowPrivateAccess = "true"))
 	TArray<FString> MeshesPlayer;
+	UPROPERTY(Replicated,meta = (AllowPrivateAccess = "true"))
 	TArray<FString> AnimacaoPlayer;
+	UPROPERTY(Replicated,meta = (AllowPrivateAccess = "true"))
 	FString CaminhoArma;
 
 	UPROPERTY(BlueprintReadOnly,Replicated,Category="Variaveis")
@@ -70,9 +75,13 @@ public:
 	UPROPERTY(Replicated,BlueprintReadWrite,EditAnywhere, Category="Personagem")
 	TEnumAsByte<TipoPersonagem> PersonagemNPC = Estagiario;
 
+	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	UAnimBlueprint* Estagiario_Anim;
+	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	UAnimBlueprint* Pleno_Anim;
+	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	UAnimBlueprint* Senior_Anim;
+	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	UAnimBlueprint* Chefe_Anim;
 
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
@@ -92,11 +101,10 @@ public:
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	FRotator RotacaoSocketArma;
 
-	UFUNCTION(BlueprintCallable,Reliable,Client)
 	void VerificaEscolhaPersonagem();
 	
-	UFUNCTION(BlueprintCallable,Reliable,Client)
 	void VerificaMeshPersonagem(float Index);
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -138,7 +146,6 @@ protected:
 
 	//Metodos
 	void DefinePadroes();
-	void ResetaAcoes();
 
 	void DefineEstadoAtual();
 	void CriaCameraConfig();

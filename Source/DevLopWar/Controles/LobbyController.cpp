@@ -1,9 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 
 
 #include "LobbyController.h"
-#include "DevOpPlayerState.h"
-#include "LobbyGameMode.h"
+#include "DevLopWar/GameModes/LobbyGameMode.h"
+#include "DevLopWar/PlayerStates/DevOpPlayerState.h"
 #include "Net/UnrealNetwork.h"
 
 void ALobbyController::EnviarMensagemServer_Implementation(const FString& nome, const FString& mensagem)
@@ -21,7 +23,6 @@ void ALobbyController::EnviarMensagemServer_Implementation(const FString& nome, 
 void ALobbyController::EnviarMensagemCliente_Implementation(const FString& nome, const FString& mensagem)
 {
 	HudChat->EnviaMensagemChat(mensagem);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "funcionou no cliente");
 }
 
 void ALobbyController::SetupInputComponent()
@@ -48,7 +49,6 @@ void ALobbyController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 void ALobbyController::VerEntradaLogin_Implementation(const TArray<FString>& JogadoresSalaNome)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "detectou o player controller" + GetName());
 	if (IsValid(HudChat))
 	{
 		HudChat->AdicionaHudSalas(JogadoresSalaNome);

@@ -1,12 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "LobbyController.h"
 #include "Engine/GameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "DevLopWar/Controles/LobbyController.h"
 #include "DevLopWarGameInstance.generated.h"
 
 /**

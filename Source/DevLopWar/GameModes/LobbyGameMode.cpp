@@ -1,16 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 
 
 #include "LobbyGameMode.h"
-
-#include "DevLopWarGameInstance.h"
-#include "DevOpPlayerState.h"
-#include "OnlineSessionSettings.h"
+#include "DevLopWar/GameInstance/DevLopWarGameInstance.h"
 #include "GameFramework/HUD.h"
 #include "Delegates/DelegateSignatureImpl.inl"
 #include "Delegates/DelegateSignatureImpl.inl"
+#include "DevLopWar/Controles/LobbyController.h"
+#include "DevLopWar/PlayerStates/DevOpPlayerState.h"
 #include "Kismet/GameplayStatics.h"
-#include "Interfaces/OnlineSessionInterface.h"
 #include "Net/UnrealNetwork.h"
 
 ALobbyGameMode::ALobbyGameMode()
@@ -68,14 +68,12 @@ void ALobbyGameMode::HandlePlayerJoined(APlayerController* PlayerController)
 			if (IsValid(JogadoresSala[i]) && JogadoresSala[i] != PlayerController)
 			{
 				ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[i]);
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou o player controller"+Controle->GetName());
 				Controle->VerEntradaLogin(JogadoresSalaNome);
 			}
 			else if (IsValid(JogadoresSala[i]) && JogadoresSala[i] == PlayerController)
 			{
 				ValorIndexUsuarioAtraso = i;
 				GetWorldTimerManager().SetTimer(Contador, this, &ALobbyGameMode::TimerHud, 0.25f,false);
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"é IGUAL");
 			}
 		}
 	}
@@ -101,7 +99,6 @@ void ALobbyGameMode::DesconectaCliente_Implementation(APlayerController* PlayerC
 		if (IsValid(JogadoresSala[i]))
 		{
 			ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[i]);
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou o player controller"+Controle->GetName());
 			Controle->VerEntradaLogin(JogadoresSalaNome);
 		}
 	}
@@ -144,13 +141,6 @@ void ALobbyGameMode::EnviarMensagemChat_Implementation(const FString& mensagem)
 	check(World);
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		// APlayerController* ControleDefault = UGameplayStatics::GetPlayerController(this, 0);
-		// ALobbyController* ControleLobby = Cast<ALobbyController>(ControleDefault);
-		// if (IsValid(ControleLobby->HudChat))
-		// {
-		// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou" + ControleLobby->GetName() +" "+ControleLobby->HudChat->GetName());
-		// 		ControleLobby->HudChat->EnviaMensagemChat(mensagem);
-		// }
 		for (int i = 0; i < JogadoresSala.Num();i++)
 		{
 			if (IsValid(JogadoresSala[i]))
@@ -159,24 +149,8 @@ void ALobbyGameMode::EnviarMensagemChat_Implementation(const FString& mensagem)
 				if (IsValid(PlayerState))
 				{
 					PlayerState->EnviarMensagemCliente(JogadoresSala[i]->GetName(),mensagem);
-					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,"detectou" + JogadoresSala[i]->GetName() +" "+PlayerState->GetName());
 				}
 			}
 		}
-		// for (FConstControllerIterator it = World->GetControllerIterator(); it; ++it)
-		// {
-		// 	if (APlayerController* PlayerController = Cast<APlayerController>(*it))
-		// 		if (IsValid(PlayerController))
-		// 		{
-		// 			ALobbyController* PlayerState = Cast<ALobbyController>(PlayerController);
-		// 				if (IsValid(PlayerState->HudChat))
-		// 				{
-		// 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,
-		// 							 "Este é o teste com nome de mapa :" + PlayerController->
-		// 							 GetName() + PlayerState->GetName());
-		// 					PlayerState->HudChat->EnviaMensagemChat(PlayerController->GetName(),mensagem);
-		// 				}					
-		// 		}
-		// }
 	}
 }

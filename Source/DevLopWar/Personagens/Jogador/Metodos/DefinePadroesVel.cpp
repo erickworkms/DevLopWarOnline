@@ -1,4 +1,6 @@
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
 
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -7,8 +9,6 @@
 
 void AJogador_Base::DefinePadroesVel(float valor)
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-	// 										 FString::SanitizeFloat(ArmaAquecimento) + "arma aquecimento" + GetName());
 	if (Mirar == true)
 	{
 		VelocidadeMax = 300;

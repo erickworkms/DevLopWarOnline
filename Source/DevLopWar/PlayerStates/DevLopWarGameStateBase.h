@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Estruturas/Struct.h"
+#include "DevLopWar/Estruturas/Struct.h"
 #include "GameFramework/GameStateBase.h"
 #include "DevLopWarGameStateBase.generated.h"
 
@@ -18,6 +18,22 @@ class DEVLOPWAR_API ADevLopWarGameStateBase : public AGameStateBase
 	ADevLopWarGameStateBase();
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "times")
+	TArray<FInformacaoJogador> Jogadores;
+
+	UFUNCTION()
+	float OnRep_TempoJogo();
+	UFUNCTION()
+	float OnRep_VidaTerritorio1();
+	UFUNCTION()
+	float OnRep_VidaTerritorio2();
+	UFUNCTION()
+	float OnRep_VidaTerritorio3();
+	UFUNCTION()
+	float OnRep_VidaTerritorio4();
+	UFUNCTION()
+	float OnRep_TimeVencedor();
+private:
 	UPROPERTY(Replicated)
 	float TempoJogo = 36000000;
 	UPROPERTY(Replicated)
@@ -29,11 +45,8 @@ public:
 	UPROPERTY(Replicated)
 	float VidaTerritorio4 = 100;
 	UPROPERTY(Replicated)
-	FString TimeVencedor = "";
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "times")
-	TArray<FInformacaoJogador> Jogadores;
-
+	ETime TimeVencedor = ETime::Clientes;
+	
 	UFUNCTION(BlueprintCallable)
 	void AdicionaJogadorTime(const FString& NomeJogador,const ETime& Time);
 	UFUNCTION(BlueprintCallable)

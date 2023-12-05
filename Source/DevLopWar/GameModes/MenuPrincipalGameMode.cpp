@@ -1,14 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 
 #include "MenuPrincipalGameMode.h"
 
-#include "DevLopWarGameInstance.h"
+#include "DevLopWar/GameInstance/DevLopWarGameInstance.h"
 #include "GameFramework/HUD.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystemUtils.h"
 #include "Delegates/DelegateSignatureImpl.inl"
-#include "Estruturas/Struct.h"
+#include "DevLopWar/Estruturas/Struct.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetStringLibrary.h"
 
@@ -117,7 +119,6 @@ void AMenuPrincipalGameMode::OnFindSessionsComplete(bool Conectou)
 	}
 	else
 	{
-		// Lidar com falha na pesquisa de sessões
 	}
 }
 
@@ -145,14 +146,9 @@ void AMenuPrincipalGameMode::ConectaSalaHost(const FOnlineSessionSearchResult& S
 	if (OnlineSub)
 	{
 		IOnlineSessionPtr SessionInterface = OnlineSub->GetSessionInterface();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,
-		                                 UKismetStringLibrary::Conv_BoolToString(SessionInterface.IsValid()) +
-		                                 "sessionInterface");
+
 		if (SessionInterface.IsValid())
 		{			
-			 // FName SessionName;
-			 // SearchResult.Session.SessionSettings.Get(FName("SessionName"), SessionName);
-			 //
 			OnJoinSessionCompleteDelegate.BindUObject(this, &AMenuPrincipalGameMode::OnJoinSessionComplete);
 			SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegateHandle);
 			SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
@@ -187,10 +183,8 @@ void AMenuPrincipalGameMode::OnJoinSessionComplete(FName SessionName, EOnJoinSes
 	}
 	else
 	{
-		// Lógica para lidar com falha na junção à sessão
 	}
-
-	// Remover o callback para evitar chamadas adicionais
+	
 	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
 	if (OnlineSubsystem)
 	{
@@ -205,9 +199,8 @@ void AMenuPrincipalGameMode::OnJoinSessionComplete(FName SessionName, EOnJoinSes
 void AMenuPrincipalGameMode::HandleJoinSession(UNetConnection* Conexao)
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "achou a conexao com o controle");
 	// Obtém o nome do cenário que o servidor deseja carregar
-	FString MapName = "192.168.15.180"; // Substitua com o nome do seu cenário
+	FString MapName = "192.168.15.180";
 
 	// Inicia a transição para o novo cenário no cliente
 	PlayerController->ClientTravel(MapName, ETravelType::TRAVEL_Absolute);
@@ -233,10 +226,10 @@ void AMenuPrincipalGameMode::RetornaBuscar()
 		SessionSearch->SearchResults[i].Session.SessionSettings.Get(FName(TEXT("SessionName")), GeraDados[i].NomeSala);
 		SessionSearch->SearchResults[i].Session.SessionSettings.Get(SETTING_MAPNAME, GeraDados[i].Cenario);
 		SessionSearch->SearchResults[i].Session.SessionSettings.Get(SETTING_MAPNAME,ResultsString);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Este é o teste com nome de mapa :"+ResultsString);
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Este é o teste com nome de mapa :"+ResultsString);
 		SessionSearch->SearchResults[i].Session.SessionSettings.Get(FName(TEXT("SessionName")),sala);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Este é o teste com nome SessionName :"+sala);
-		// FString SessionInfo = FString::Printf(
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Este é o teste com nome SessionName :"+sala);
+		// // FString SessionInfo = FString::Printf(
 		// 	TEXT("Nome Sala: %s,Cenario: %s,Session ID: %s, Num Players: %d,Num Players na sala: %d"), *GeraDados[i].NomeSala, *GeraDados[i].Cenario, *GeraDados[i].ip,
 		// 	GeraDados[i].MaxJogadores,GeraDados[i].JogadoresSala);
 		//

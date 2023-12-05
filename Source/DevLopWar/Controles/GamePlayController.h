@@ -1,10 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 #include "GameFramework/PlayerController.h"
-#include "Personagens/Jogador/Jogador_Base.h"
 #include "GamePlayController.generated.h"
 
 /**
@@ -20,6 +22,9 @@ public:
 
 	UFUNCTION(BlueprintCallable,Reliable,Server)
 	void EscolhePersonagem(TipoPersonagem PersonagemNPC);
+
+	UFUNCTION(BlueprintCallable,Reliable,Client)
+	void EscolhePersonagemCliente(TipoPersonagem PersonagemNPC);
 
 	UPROPERTY(BlueprintReadWrite,Replicated)
 	AJogador_Base* Personagem;

@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "DevLopWarGameStateBase.h"
-
+#include "DevLopWar/Estruturas/Struct.h"
 #include "Net/UnrealNetwork.h"
 
 ADevLopWarGameStateBase::ADevLopWarGameStateBase()
