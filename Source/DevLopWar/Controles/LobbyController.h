@@ -28,8 +28,18 @@ public:
 	UFUNCTION(Reliable,Client)
 	void VerEntradaLogin(const TArray<FString>& JogadoresSalaNome);
 
+	UFUNCTION(Reliable,Client)
+	void AdicionaDadosInstance(int32 IndexJogador);
+
+	UFUNCTION(Reliable,Client)
+	void VerificaDadosInstance();
+
+	UFUNCTION(BlueprintCallable,Reliable,Client)
+	void AlteraTimeInstance(ETime Time);
+
 	UPROPERTY(Replicated,BlueprintReadWrite)
 	ABaseHudMenuPrincipal* HudChat;
+	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
 	virtual void SetupInputComponent() override;

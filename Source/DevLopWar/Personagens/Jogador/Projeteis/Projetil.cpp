@@ -5,8 +5,8 @@
 
 #include "Projetil.h"
 
-#include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
-#include "DevLopWar/Personagens/NPC/NPC_Base.h"
+#include "DevLopWar/GameModes/DevLopWarGameMode.h"
+#include "Delegates/DelegateSignatureImpl.inl"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -26,30 +26,7 @@ void AProjetil::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 void AProjetil::DanoAtaqueProjetil_Implementation(AActor* InimigoDetectado)
 {
-	AJogador_Base* Jogador_Detectado = Cast<AJogador_Base>(InimigoDetectado);
-	AJogador_Base* Inimigo = Cast<AJogador_Base>(DonoProjetil);
-	ANPC_Base* NPC_Detectado = Cast<ANPC_Base>(InimigoDetectado);
-
-	if (IsValid(Jogador_Detectado))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-												 InimigoDetectado->GetName() + "bala" + GetName());
-		Jogador_Detectado->Vida -= Inimigo->QuantidadeDano;
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-										 FString::SanitizeFloat(Jogador_Detectado->Vida) + "vida" + GetName());
-
-		Destroy();
-	}
-	if (IsValid(NPC_Detectado))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-												 InimigoDetectado->GetName() + "bala" + GetName());
-		NPC_Detectado->Vida -= 10;
-		Destroy();
-	}
-	else if (InimigoDetectado != DonoProjetil)
-	{
-		Destroy();
-	}
-
+	AGameModeBase* GameModeEncontrado = GetWorld()->GetAuthGameMode();
+	ADevLopWarGameMode* GameMode = Cast<ADevLopWarGameMode>(GameModeEncontrado);
+	GameMode->DanoAtaqueProjetil(DonoProjetil,InimigoDetectado,this);
 }

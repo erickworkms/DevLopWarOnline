@@ -13,14 +13,12 @@
 #include "Net/UnrealNetwork.h"
 
 
-
-// Sets default values
 ANPC_Base::ANPC_Base()
 {
 	VerificaPadroes();
 }
 
-// Called when the game starts or when spawned
+
 void ANPC_Base::BeginPlay()
 {
 	Super::BeginPlay();
@@ -29,7 +27,7 @@ void ANPC_Base::BeginPlay()
 	VerificaLocalPatrulha();
 }
 
-// Called every frame
+
 void ANPC_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -207,7 +205,6 @@ void ANPC_Base::DefineEstadoAtual_Implementation()
 void ANPC_Base::VerificaLocalPatrulha_Implementation()
 {
 	VariaveisIA_BlackBoard->SetValueAsVector("LocalObjetivo", LocalObjetivoPatrulha->GetActorLocation());
-	//ControleNPC->ClearFocus(EAIFocusPriority::Default);
 }
 
 void ANPC_Base::MoverPersonagemPatrulha_Implementation(FVector LocalPatrulha)

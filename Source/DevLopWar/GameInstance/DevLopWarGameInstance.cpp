@@ -4,3 +4,13 @@
 
 #include "DevLopWarGameInstance.h"
 
+#include "Net/UnrealNetwork.h"
+
+
+void UDevLopWarGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UDevLopWarGameInstance,ControleJogador);
+	DOREPLIFETIME(UDevLopWarGameInstance,IndexJogador);
+	DOREPLIFETIME(UDevLopWarGameInstance,Time);
+}

@@ -9,6 +9,8 @@
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "DevLopWar/Controles/LobbyController.h"
+#include "DevLopWar/Estruturas/Struct.h"
+#include "Delegates/DelegateSignatureImpl.inl"
 #include "DevLopWarGameInstance.generated.h"
 
 /**
@@ -20,13 +22,39 @@ class DEVLOPWAR_API UDevLopWarGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(Replicated)
+	APlayerController* ControleJogador;
+	
+	UPROPERTY(Replicated)
+	int32 IndexJogador;
+	
+	UPROPERTY(Replicated,BlueprintReadWrite)
+	ETime Time;
+
+	
 	UPROPERTY(BlueprintReadWrite)
 	FString token;
+	
 	UPROPERTY(BlueprintReadWrite)
 	FString NomeJogador;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FSala> GeraDados;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "times")
+	TArray<FInformacaoJogador> Jogadores;
+
 	UPROPERTY(BlueprintReadWrite)
-	ALobbyController* ControleLobby;
+	TArray<APlayerController*> JogadoresSala;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FString> JogadoresSalaNome;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "times")
+	int32 TotalJogadores;
 	
 	FOnlineSessionSettings SessionSettings;
 	IOnlineSessionPtr SessionInt;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

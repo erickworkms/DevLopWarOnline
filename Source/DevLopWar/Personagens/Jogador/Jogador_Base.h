@@ -27,7 +27,7 @@ class DEVLOPWAR_API AJogador_Base : public ACharacter
 	UStaticMeshComponent* LocalReferenciaCamera;
 
 public:
-	// Sets default values for this character's properties
+
 	AJogador_Base();
 	
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
@@ -107,7 +107,6 @@ public:
 
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	//Botões sensíveis, direcional

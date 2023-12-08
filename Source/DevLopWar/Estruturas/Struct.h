@@ -53,6 +53,7 @@ enum class ETime : uint8
 	Clientes,
 	Agil,
 	Cascade,
+	Nenhum
 };
 UENUM(BlueprintType)
 enum class EFase : uint8
@@ -72,7 +73,20 @@ struct FInformacaoJogador
 	UPROPERTY(BlueprintReadWrite, Category = "Jogador")
 	ETime Time;
 };
+USTRUCT(BlueprintType)
+struct FInformacaoJogadorGameplay
+{
+	GENERATED_BODY()
 
+	UPROPERTY(BlueprintReadWrite, Category = "Jogador")
+	int32 NumZumbiesMortos;
+	UPROPERTY(BlueprintReadWrite, Category = "Jogador")
+	int32 NumJogadoresMortos;
+	UPROPERTY(BlueprintReadWrite, Category = "Jogador")
+	int32 NumMortes;
+	UPROPERTY(BlueprintReadWrite, Category = "Jogador")
+	ETime TimeEscolhido;
+};
 USTRUCT(BlueprintType)
 struct FSala
 {

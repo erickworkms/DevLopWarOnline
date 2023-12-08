@@ -9,6 +9,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "DevLopWar/Huds/BaseHudMenuPrincipal.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "DevLopWar/Estruturas/Struct.h"
+#include "Delegates/DelegateSignatureImpl.inl"
 #include "LobbyGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerJoinedDelegate, APlayerController*, NovoJogador);
@@ -36,6 +38,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "times")
+	TArray<FInformacaoJogador> Jogadores;
+	
 	virtual void BeginPlay() override;
 
 	FOnPlayerJoinedDelegate OnPlayerJoined;
@@ -74,5 +79,5 @@ private:
 	FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
 	UPROPERTY()
-	UDevLopWarGameInstance* SeuGameInstance;
+	UDevLopWarGameInstance* GameInstance;
 };

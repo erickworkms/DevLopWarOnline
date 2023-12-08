@@ -28,6 +28,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite,Replicated)
 	AJogador_Base* Personagem;
+
+	UFUNCTION(Reliable,Client)
+	void VerificaDadosInstance();
+
+	UFUNCTION(BlueprintCallable,Reliable,Server)
+	void AdicionaPlayerListaServidor(AGamePlayController* Controle);
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

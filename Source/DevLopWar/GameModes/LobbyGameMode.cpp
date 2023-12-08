@@ -7,7 +7,6 @@
 #include "DevLopWar/GameInstance/DevLopWarGameInstance.h"
 #include "GameFramework/HUD.h"
 #include "Delegates/DelegateSignatureImpl.inl"
-#include "Delegates/DelegateSignatureImpl.inl"
 #include "DevLopWar/Controles/LobbyController.h"
 #include "DevLopWar/PlayerStates/DevOpPlayerState.h"
 #include "Kismet/GameplayStatics.h"
@@ -36,7 +35,7 @@ void ALobbyGameMode::BeginPlay()
 		DefaultPlayerController->bShowMouseCursor = true;
 		DefaultPlayerController->DefaultMouseCursor = EMouseCursor::Crosshairs;
 
-		SeuGameInstance = Cast<UDevLopWarGameInstance>(GetWorld()->GetGameInstance());
+		GameInstance = Cast<UDevLopWarGameInstance>(GetWorld()->GetGameInstance());
 	}
 }
 
@@ -44,13 +43,34 @@ void ALobbyGameMode::PostLogin(APlayerController* NovoJogador)
 {
 	Super::PostLogin(NovoJogador);
 	JogadoresSala.Add(NovoJogador);
+	
 	ALobbyController* Controle = Cast<ALobbyController>(NovoJogador);
+	
+	Controle->AdicionaDadosInstance(JogadoresSala.Num() - 1);
+	
+	FInformacaoJogador InformacaoJogador;
+	InformacaoJogador.Nome = Controle->GetName();
+	InformacaoJogador.Time = ETime::Nenhum;
+
+	Jogadores.Add(InformacaoJogador);
+	
 	JogadoresSalaNome.Add(Controle->GetName());
+	
 	OnPlayerJoined.Broadcast(NovoJogador);
 }
 
 void ALobbyGameMode::IniciaPartida()
 {
+	for (int i = 0;i< JogadoresSala.Num();i++)
+	{
+		ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[i]);
+		Controle->VerificaDadosInstance();
+	}
+	GameInstance->GeraDados = GeraDados;
+	GameInstance->Jogadores = Jogadores;
+	GameInstance->JogadoresSala = JogadoresSala;
+	GameInstance->JogadoresSalaNome = JogadoresSalaNome;
+	GameInstance->TotalJogadores = JogadoresSala.Num();
 	GetWorld()->ServerTravel("/Game/Mapas/MapaJogavel?listen");
 }
 
@@ -120,11 +140,11 @@ bool ALobbyGameMode::DesconectaCliente_Validate(APlayerController* PlayerControl
 
 void ALobbyGameMode::ExcluirSala()
 {
-	if (SeuGameInstance->SessionInt.IsValid())
+	if (GameInstance->SessionInt.IsValid())
 	{
 		FString NomeDaSala;
-		SeuGameInstance->SessionSettings.Get(NAME_GameSession, NomeDaSala);
-		SeuGameInstance->SessionInt->DestroySession(*NomeDaSala);
+		GameInstance->SessionSettings.Get(NAME_GameSession, NomeDaSala);
+		GameInstance->SessionInt->DestroySession(*NomeDaSala);
 	}
 }
 

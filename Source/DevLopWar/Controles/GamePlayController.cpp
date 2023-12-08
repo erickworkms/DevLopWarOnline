@@ -5,8 +5,11 @@
 
 #include "GamePlayController.h"
 #include "EngineUtils.h"
+#include "DevLopWar/GameModes/DevLopWarGameMode.h"
 #include "GameFramework/PlayerStart.h"
 #include "Net/UnrealNetwork.h"
+#include "DevLopWar/Estruturas/Struct.h"
+#include "Delegates/DelegateSignatureImpl.inl"
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 
 
@@ -56,6 +59,11 @@ void AGamePlayController::CriaPersonagem_Implementation()
 		bShowMouseCursor = false;
 		SetPawn(Personagem);
 		Possess(Personagem);
+		UDevLopWarGameInstance* PlayerInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
+
+		VerificaDadosInstance();
+
+		AdicionaPlayerListaServidor(this);
 	}
 }
 
@@ -72,10 +80,6 @@ void AGamePlayController::EscolhePersonagem_Implementation(TipoPersonagem Person
 			EscolhePersonagemCliente(PersonagemNPC);
 		}
 	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "falhou no personagem");
-	}
 }
 
 void AGamePlayController::EscolhePersonagemCliente_Implementation(TipoPersonagem PersonagemNPC)
@@ -90,8 +94,35 @@ void AGamePlayController::EscolhePersonagemCliente_Implementation(TipoPersonagem
 			Personagem->VerificaEscolhaPersonagem();
 		}
 	}
-	else
+}
+
+void AGamePlayController::AdicionaPlayerListaServidor_Implementation(AGamePlayController* Controle)
+{
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+
+	if (IsValid(GameMode))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "falhou no personagem");
+		ADevLopWarGameMode* DevGameMode = Cast<ADevLopWarGameMode>(GameMode);
+		if (IsValid(DevGameMode))
+		{
+			UDevLopWarGameInstance* PlayerInstance = Cast<UDevLopWarGameInstance>(Controle->GetGameInstance());
+
+			FInformacaoJogadorGameplay InformacaoGameplay;
+			InformacaoGameplay.NumZumbiesMortos = 0;
+			InformacaoGameplay.NumJogadoresMortos = 0;
+			InformacaoGameplay.NumMortes = 0;
+			InformacaoGameplay.TimeEscolhido = DevGameMode->Jogadores[PlayerInstance->IndexJogador].Time;
+			DevGameMode->JogadoresSala[PlayerInstance->IndexJogador] = this;
+			VerificaDadosInstance();
+			DevGameMode->InformacaoGameplay[PlayerInstance->IndexJogador] = InformacaoGameplay;
+		}
 	}
+}
+
+void AGamePlayController::VerificaDadosInstance_Implementation()
+{
+	UDevLopWarGameInstance* PlayerInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow,
+	                                 "Este é a instance no final " + PlayerInstance->GetName() + FString::FromInt(
+		                                 PlayerInstance->IndexJogador));
 }

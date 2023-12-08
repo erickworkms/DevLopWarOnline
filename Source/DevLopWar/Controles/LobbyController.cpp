@@ -41,6 +41,25 @@ void ALobbyController::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ALobbyController::AdicionaDadosInstance_Implementation(int32 IndexJogador)
+{
+	UDevLopWarGameInstance* PlayerInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
+	PlayerInstance->ControleJogador = this;
+	PlayerInstance->IndexJogador = IndexJogador;
+	PlayerInstance->Time = ETime::Agil;
+}
+void ALobbyController::AlteraTimeInstance_Implementation(ETime Time)
+{
+	UDevLopWarGameInstance* PlayerInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
+	PlayerInstance->Time = Time;
+}
+
+void ALobbyController::VerificaDadosInstance_Implementation()
+{
+	UDevLopWarGameInstance* PlayerInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow,"Este é a instance no final "+PlayerInstance->GetName() + FString::FromInt(PlayerInstance->IndexJogador));
+}
+
 void ALobbyController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
