@@ -5,6 +5,8 @@
 
 #include "ObjetivoNPC.h"
 
+#include "DevLopWar/GameModes/DevLopWarGameMode.h"
+
 AObjetivoNPC::AObjetivoNPC()
 {
 	LocalReferenciaNPC = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ReferenciaCamera"));
@@ -16,7 +18,27 @@ AObjetivoNPC::AObjetivoNPC()
 		LocalReferenciaNPC->SetStaticMesh(referencia.Object);
 	}
 
-	LocalReferenciaNPC->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LocalReferenciaNPC->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	SetReplicates(true);
 }
+
+void AObjetivoNPC::ContadorTempo_Implementation()
+{
+	AGameModeBase* GameModeEncontrado = GetWorld()->GetAuthGameMode();
+	ADevLopWarGameMode* GameMode = Cast<ADevLopWarGameMode>(GameModeEncontrado);
+	EstaBloqueado = false;
+	GameMode->ReativaPontosObjetivo(IndexTerritorio,EstaBloqueado);
+}
+
+void AObjetivoNPC::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AObjetivoNPC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
+

@@ -39,6 +39,8 @@ ALobbyController::ALobbyController()
 void ALobbyController::BeginPlay()
 {
 	Super::BeginPlay();
+	bShowMouseCursor = true;
+	DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
 
 void ALobbyController::AdicionaDadosInstance_Implementation(int32 IndexJogador)

@@ -53,6 +53,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void VerEntradaLogin();
 
+	virtual void Logout(AController* Exiting) override;
+
 	UFUNCTION()
 	void HandlePlayerJoined(APlayerController* PlayerController);
 

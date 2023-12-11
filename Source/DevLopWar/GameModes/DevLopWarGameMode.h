@@ -10,6 +10,7 @@
 #include "DevLopWar/PlayerStates/DevLopWarGameStateBase.h"
 #include "GameFramework/GameModeBase.h"
 #include "Delegates/DelegateSignatureImpl.inl"
+#include "DevLopWar/Controles/GamePlayController.h"
 #include "DevLopWarGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -35,7 +36,11 @@ public:
 
 	FTimerHandle Contador;
 
+	FTimerHandle ReviverContador;
+
 	virtual void BeginPlay() override;
+
+	virtual void Logout(AController* Exiting) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -54,43 +59,39 @@ public:
 	void AlterarNumMortes(int32 Index);
 	UFUNCTION(Reliable,Server)
 	void AlterarTimeEscolhido(int32 Index,ETime Time);
-
+		
 	UFUNCTION(Reliable,Server)
 	void DanoAtaqueProjetil(AActor* DonoProjetil,AActor* InimigoDetectado,AActor* Projetil);
+
+	UFUNCTION(Reliable,Server)
+	void CriaInformacoesJogadorServer(AGamePlayController* Controle,FInformacaoJogadorGameplay InformacaoGameplayLocal,int IndexJogador);
+
+	UFUNCTION(Reliable,Server)
+	void ReativaPontosObjetivo(int IndexObjetivo,bool EstadoBloqueio);
+
+	UFUNCTION(BlueprintCallable,Reliable,Server)
+	void RetornaLobby();
+
 private:
 	UPROPERTY()
-	float TempoJogo = 300;
+	float TempoJogo = 50;
+
+	UPROPERTY()
+	bool JogoFinalizado = false;
 
 	UPROPERTY()
 	UDevLopWarGameInstance* GameInstance;
-	
-	UPROPERTY(Replicated)
-	float VidaTerritorio1 = 100;
-	UPROPERTY(Replicated)
-	ETime VidaTerritorio1Dono = ETime::Nenhum;
-	
-	UPROPERTY(Replicated)
-	float VidaTerritorio2 = 100;
-	UPROPERTY(Replicated)
-	ETime VidaTerritorio2Dono = ETime::Nenhum;
-	
-	UPROPERTY(Replicated)
-	float VidaTerritorio3 = 100;
-	UPROPERTY(Replicated)
-	ETime VidaTerritorio3Dono = ETime::Nenhum;
-	
-	UPROPERTY(Replicated)
-	float VidaTerritorio4 = 100;
-	UPROPERTY(Replicated)
-	ETime VidaTerritorio4Dono = ETime::Nenhum;
-	
-	UPROPERTY(Replicated)
-	ETime TimeVencedor = ETime::Clientes;
-	
+		
 	UPROPERTY()
 	ADevLopWarGameStateBase* GameStateServer;
+
+	UFUNCTION(BlueprintCallable)
+	void DetectaPontosObjetivo();
+		
 	UFUNCTION(Reliable,Server)
 	void ContadorTempo();
+
+	
 };
 
 

@@ -8,7 +8,6 @@
 #include "Engine/GameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
-#include "DevLopWar/Controles/LobbyController.h"
 #include "DevLopWar/Estruturas/Struct.h"
 #include "Delegates/DelegateSignatureImpl.inl"
 #include "DevLopWarGameInstance.generated.h"
@@ -25,7 +24,7 @@ public:
 	UPROPERTY(Replicated)
 	APlayerController* ControleJogador;
 	
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated,BlueprintReadWrite)
 	int32 IndexJogador;
 	
 	UPROPERTY(Replicated,BlueprintReadWrite)

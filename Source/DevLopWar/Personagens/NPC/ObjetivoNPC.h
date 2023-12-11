@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DevLopWar/Estruturas/Struct.h"
 #include "GameFramework/Actor.h"
 #include "ObjetivoNPC.generated.h"
 
@@ -18,4 +19,25 @@ public:
 
 	UPROPERTY()
 	UStaticMeshComponent* LocalReferenciaNPC;
+
+	UPROPERTY(Replicated,BlueprintReadWrite)
+	float Vida = 500;
+
+	UPROPERTY(Replicated)
+	ETime TimeTerritorio = ETime::Nenhum;
+
+	UPROPERTY(Replicated,BlueprintReadWrite,EditAnywhere)
+	int IndexTerritorio = 1;
+
+	UPROPERTY(Replicated,BlueprintReadWrite)
+	bool EstaBloqueado = false;
+
+	UFUNCTION(Reliable,Server)
+	void ContadorTempo();
+
+	FTimerHandle Contador;
+	
+	virtual void BeginPlay() override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

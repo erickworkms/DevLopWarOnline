@@ -51,6 +51,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RetornaBuscar();
+	
 
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;

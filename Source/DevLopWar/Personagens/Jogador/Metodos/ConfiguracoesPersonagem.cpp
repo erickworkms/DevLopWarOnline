@@ -29,6 +29,7 @@ void AJogador_Base::CriaPersonagemConfig()
 	SetReplicates(true);
 	SetReplicateMovement(true);
 	
+	
 	MeshesPlayer.Init("4", 4);
 	DefinePadroes();
 	GetCapsuleComponent()->InitCapsuleSize(29.0f, 76.0f);

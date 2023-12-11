@@ -29,41 +29,61 @@ public:
 	UFUNCTION(Reliable,Server)
 	void SetVidaTerritorio1(float VidaTerritorio1Set);
 	UFUNCTION(BlueprintCallable)
-	ETime GetVidaTerritorio1Dono();
+	ETime GetDonoTerritorio1();
 	UFUNCTION(Reliable,Server)
-	void SetVidaTerritorio1Dono(ETime VidaTerritorio1DonoSet);
+	void SetDonoTerritorio1(ETime DonoTerritorio1Set);
+	UFUNCTION(BlueprintCallable)
+	bool GetBloqueioTerritorio1();
+	UFUNCTION(Reliable,Server)
+	void SetBloqueioTerritorio1(bool BloqueioTerritorio1Set);
+	
 	
 	UFUNCTION(BlueprintCallable)
 	float GetVidaTerritorio2();
 	UFUNCTION(Reliable,Server)
 	void SetVidaTerritorio2(float VidaTerritorio2Set);
 	UFUNCTION(BlueprintCallable)
-	ETime GetVidaTerritorio2Dono();
+	ETime GetDonoTerritorio2();
 	UFUNCTION(Reliable,Server)
-	void SetVidaTerritorio2Dono(ETime VidaTerritorio2DonoSet);
+	void SetDonoTerritorio2(ETime DonoTerritorio2Set);
+	UFUNCTION(BlueprintCallable)
+	bool GetBloqueioTerritorio2();
+	UFUNCTION(Reliable,Server)
+	void SetBloqueioTerritorio2(bool BloqueioTerritorio2Set);
 	
 	UFUNCTION(BlueprintCallable)
 	float GetVidaTerritorio3();
 	UFUNCTION(Reliable,Server)
 	void SetVidaTerritorio3(float VidaTerritorio3Set);
 	UFUNCTION(BlueprintCallable)
-	ETime GetVidaTerritorio3Dono();
+	ETime GetDonoTerritorio3();
 	UFUNCTION(Reliable,Server)
-	void SetVidaTerritorio3Dono(ETime VidaTerritorio3DonoSet);
+	void SetDonoTerritorio3(ETime DonoTerritorio3Set);
+	UFUNCTION(BlueprintCallable)
+	bool GetBloqueioTerritorio3();
+	UFUNCTION(Reliable,Server)
+	void SetBloqueioTerritorio3(bool BloqueioTerritorio3Set);
 	
 	UFUNCTION(BlueprintCallable)
 	float GetVidaTerritorio4();
 	UFUNCTION(Reliable,Server)
 	void SetVidaTerritorio4(float VidaTerritorio4Set);
 	UFUNCTION(BlueprintCallable)
-	ETime GetVidaTerritorio4Dono();
+	ETime GetDonoTerritorio4();
 	UFUNCTION(Reliable,Server)
-	void SetVidaTerritorio4Dono(ETime VidaTerritorio4DonoSet);
+	void SetDonoTerritorio4(ETime DonoTerritorio4Set);
+	UFUNCTION(BlueprintCallable)
+	bool GetBloqueioTerritorio4();
+	UFUNCTION(Reliable,Server)
+	void SetBloqueioTerritorio4(bool BloqueioTerritorio4Set);
+
+	UFUNCTION(BlueprintCallable)
+	bool GetVerificaTerritorioConquistado(int IndexTerritorio,ETime TimeAtualSet);
 	
 	UFUNCTION(BlueprintCallable)
 	ETime GetTimeVencedor();
 	UFUNCTION(Reliable,Server)
-	void SetTimeVencedor(ETime TimeVencedorSet);
+	void SetTimeVencedor();
 
 private:
 
@@ -72,26 +92,34 @@ private:
 	
 	UPROPERTY(ReplicatedUsing=SetVidaTerritorio1)
 	float VidaTerritorio1;
-	UPROPERTY(ReplicatedUsing=SetVidaTerritorio1Dono)
-	ETime VidaTerritorio1Dono;
+	UPROPERTY(ReplicatedUsing=SetDonoTerritorio1)
+	ETime DonoTerritorio1;
+	UPROPERTY(ReplicatedUsing=SetBloqueioTerritorio1)
+	bool BloqueioTerritorio1;
 	
 	UPROPERTY(ReplicatedUsing=SetVidaTerritorio2)
 	float VidaTerritorio2;
-	UPROPERTY(ReplicatedUsing=SetVidaTerritorio2Dono)
-	ETime VidaTerritorio2Dono;
+	UPROPERTY(ReplicatedUsing=SetDonoTerritorio2)
+	ETime DonoTerritorio2;
+	UPROPERTY(ReplicatedUsing=SetBloqueioTerritorio2)
+	bool BloqueioTerritorio2;
 	
 	UPROPERTY(ReplicatedUsing=SetVidaTerritorio3)
 	float VidaTerritorio3;
-	UPROPERTY(ReplicatedUsing=SetVidaTerritorio3Dono)
-	ETime VidaTerritorio3Dono;
+	UPROPERTY(ReplicatedUsing=SetDonoTerritorio3)
+	ETime DonoTerritorio3;
+	UPROPERTY(ReplicatedUsing=SetBloqueioTerritorio3)
+	bool BloqueioTerritorio3;
 	
 	UPROPERTY(ReplicatedUsing=SetVidaTerritorio4)
 	float VidaTerritorio4;
-	UPROPERTY(ReplicatedUsing=SetVidaTerritorio4Dono)
-	ETime VidaTerritorio4Dono;
+	UPROPERTY(ReplicatedUsing=SetDonoTerritorio4)
+	ETime DonoTerritorio4;
+	UPROPERTY(ReplicatedUsing=SetBloqueioTerritorio4)
+	bool BloqueioTerritorio4;
 	
 	UPROPERTY(ReplicatedUsing=SetTimeVencedor)
-	ETime TimeVencedor = ETime::Clientes;
+	ETime TimeVencedor = ETime::Nenhum;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	

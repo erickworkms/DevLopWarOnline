@@ -5,6 +5,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DevLopWar/Estruturas/Struct.h"
+#include "DevLopWar/Huds/BaseHudGameplay.h"
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 #include "GameFramework/PlayerController.h"
 #include "GamePlayController.generated.h"
@@ -29,11 +31,27 @@ public:
 	UPROPERTY(BlueprintReadWrite,Replicated)
 	AJogador_Base* Personagem;
 
-	UFUNCTION(Reliable,Client)
-	void VerificaDadosInstance();
+	UPROPERTY(BlueprintReadWrite,Replicated)
+	ABaseHudGameplay* Hud;
 
+	UFUNCTION(Reliable,Client)
+	void AtivaHudFimPartida();
+
+	UFUNCTION(Reliable,Client)
+	void VerificaDadosInstance(FInformacaoJogadorGameplay InformacaoGameplay);
+
+	UFUNCTION(Reliable,Client)
+	void AdicionaDadosInstanceServer();
+	
+	FInformacaoJogadorGameplay CriaInformacoesJogador();
+	
+	int RetornaIndexJogador();
+
+	UFUNCTION(Reliable,Server)
+	void ReviveJogador();
+	
 	UFUNCTION(BlueprintCallable,Reliable,Server)
-	void AdicionaPlayerListaServidor(AGamePlayController* Controle);
+	void AdicionaPlayerListaServidor(AGamePlayController* Controle,FInformacaoJogadorGameplay InformacaoGameplay,int IndexJogador);
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

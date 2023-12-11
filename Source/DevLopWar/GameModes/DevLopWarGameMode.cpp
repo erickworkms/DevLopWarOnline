@@ -5,11 +5,12 @@
 #include "DevLopWarGameMode.h"
 #include "DevLopWar/Controles/GamePlayController.h"
 #include "DevLopWar/GameInstance/DevLopWarGameInstance.h"
-#include "DevLopWar/Personagens/NPC/NPC_Base.h"
+#include "DevLopWar/Personagens/NPC/ObjetivoNPC.h"
 #include "DevLopWar/PlayerStates/DevLopWarGameStateBase.h"
 #include "DevLopWar/PlayerStates/DevOpPlayerState.h"
 #include "GameFramework/HUD.h"
-#include "Net/UnrealNetwork.h"
+#include "EngineUtils.h"
+#include "DevLopWar/Personagens/NPC/NPC_Base.h"
 #include "UObject/ConstructorHelpers.h"
 
 ADevLopWarGameMode::ADevLopWarGameMode()
@@ -37,7 +38,7 @@ void ADevLopWarGameMode::BeginPlay()
 	Super::BeginPlay();
 	GameStateServer = Cast<ADevLopWarGameStateBase>(GameState);
 	GameInstance = Cast<UDevLopWarGameInstance>(GetWorld()->GetGameInstance());
-	
+
 	if (HasAuthority())
 	{
 		GeraDados = GameInstance->GeraDados;
@@ -47,180 +48,134 @@ void ADevLopWarGameMode::BeginPlay()
 		JogadoresSalaNome = GameInstance->JogadoresSalaNome;
 		GetWorldTimerManager().SetTimer(Contador, this, &ADevLopWarGameMode::ContadorTempo, 0.1, true);
 	}
+	DetectaPontosObjetivo();
+}
+
+void ADevLopWarGameMode::Logout(AController* Exiting)
+{
+	Super::Logout(Exiting);
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		for (int i=0;i < JogadoresSala.Num();i++)
+		{
+			if (IsValid(JogadoresSala[i]) && JogadoresSala[i] == Exiting)
+			{
+				JogadoresSalaNome.RemoveAt(i);
+				JogadoresSala.RemoveAt(i);
+				Jogadores.RemoveAt(i);
+			}
+		}
+	}
 }
 
 void ADevLopWarGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(ADevLopWarGameMode, VidaTerritorio1);
-	DOREPLIFETIME(ADevLopWarGameMode, VidaTerritorio2);
-	DOREPLIFETIME(ADevLopWarGameMode, VidaTerritorio3);
-	DOREPLIFETIME(ADevLopWarGameMode, VidaTerritorio4);
-	DOREPLIFETIME(ADevLopWarGameMode, VidaTerritorio1Dono);
-	DOREPLIFETIME(ADevLopWarGameMode, VidaTerritorio2Dono);
-	DOREPLIFETIME(ADevLopWarGameMode, VidaTerritorio3Dono);
-	DOREPLIFETIME(ADevLopWarGameMode, VidaTerritorio4Dono);
-	DOREPLIFETIME(ADevLopWarGameMode, TimeVencedor);
-	
 }
 
 
 void ADevLopWarGameMode::ContadorTempo_Implementation()
 {
-	if (TempoJogo > 0.00001)
+	if (!JogoFinalizado)
 	{
-		TempoJogo -= 0.1;
-		GameStateServer->SetTempoJogo(TempoJogo);
-	}
-	else
-	{
-		TempoJogo = 0;
-		GameStateServer->SetTempoJogo(TempoJogo);
-	}
-}
-
-void ADevLopWarGameMode::AdicionaJogadorTime(const FString& NomeJogador, const ETime& Time)
-{
-	FInformacaoJogador dados;
-	dados.Nome = NomeJogador;
-	dados.Time = Time;
-	Jogadores.Add(dados);
-}
-
-void ADevLopWarGameMode::RemoveJogadorTime(const FString& NomeJogador)
-{
-	for (int32 i = 0; i < Jogadores.Num(); ++i)
-	{
-		if (Jogadores[i].Nome.Equals(NomeJogador, ESearchCase::IgnoreCase))
+		if (TempoJogo > 0.00001)
 		{
-			Jogadores.RemoveAt(i);
-			break;
+			TempoJogo -= 0.1;
+			GameStateServer->SetTempoJogo(TempoJogo);
 		}
-	}
-}
-
-void ADevLopWarGameMode::AcessaInformacoesTime(TArray<APlayerController*> ListaJogadores)
-{
-	for (int i=0;i < ListaJogadores.Num();i++)
-	{
-		ADevOpPlayerState* PlayerState = Cast<ADevOpPlayerState>(ListaJogadores[i]);
-		FInformacaoJogadorGameplay InfAux;
-		InfAux.NumZumbiesMortos = PlayerState->GetNumZumbiesMortos();
-		InfAux.NumJogadoresMortos = PlayerState->GetNumJogadoresMortos();
-		InfAux.NumMortes = PlayerState->GetNumMortes();
-		InfAux.TimeEscolhido = PlayerState->GetTimeEscolhido();
-		InformacaoGameplay.Add(InfAux);
-	}
-}
-
-void ADevLopWarGameMode::AlterarNumZumbiesMortos_Implementation(int32 Index)
-{
-	if (IsValid(JogadoresSala[Index]))
-	{
-		ADevOpPlayerState* PlayerState = Cast<ADevOpPlayerState>(JogadoresSala[Index]);
-		if (IsValid(PlayerState))
+		else
 		{
-			InformacaoGameplay[Index].NumZumbiesMortos++;
-			PlayerState->SetNumZumbiesMortos(InformacaoGameplay[Index].NumZumbiesMortos);
-		}
-	}
-}
-
-void ADevLopWarGameMode::AlterarNumJogadoresMortos_Implementation(int32 Index)
-{
-	if (IsValid(JogadoresSala[Index]))
-	{
-		ADevOpPlayerState* PlayerState = Cast<ADevOpPlayerState>(JogadoresSala[Index]);
-		if (IsValid(PlayerState))
-		{
-			InformacaoGameplay[Index].NumJogadoresMortos++;
-			PlayerState->SetNumJogadoresMortos(InformacaoGameplay[Index].NumJogadoresMortos);
-		}
-	}
-}
-
-void ADevLopWarGameMode::AlterarNumMortes_Implementation(int32 Index)
-{
-	if (IsValid(JogadoresSala[Index]))
-	{
-		ADevOpPlayerState* PlayerStateLocal = Cast<ADevOpPlayerState>(JogadoresSala[Index]->PlayerState);
-		if (IsValid(PlayerStateLocal))
-		{
-			InformacaoGameplay[Index].NumMortes++;
-			PlayerStateLocal->SetNumMortes(InformacaoGameplay[Index].NumMortes);
-		}
-	}
-}
-
-void ADevLopWarGameMode::AlterarTimeEscolhido_Implementation(int32 Index,ETime Time)
-{
-	if (IsValid(JogadoresSala[Index]))
-	{
-		ADevOpPlayerState* PlayerState = Cast<ADevOpPlayerState>(JogadoresSala[Index]);
-		if (IsValid(PlayerState))
-		{
-			InformacaoGameplay[Index].TimeEscolhido = Time;
-			PlayerState->SetTimeEscolhido(InformacaoGameplay[Index].TimeEscolhido);
-		}
-	}
-}
-
-void ADevLopWarGameMode::DanoAtaqueProjetil_Implementation(AActor* DonoProjetil, AActor* InimigoDetectado,AActor* Projetil)
-{
-	AJogador_Base* Jogador_Detectado = Cast<AJogador_Base>(InimigoDetectado);
-	AJogador_Base* Inimigo = Cast<AJogador_Base>(DonoProjetil);
-	ANPC_Base* NPC_Detectado = Cast<ANPC_Base>(InimigoDetectado);
-
-	int DonoIndex = 0;
-	int AlvoIndex = 0;
-	
-	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,"este é o jogador numero 0 : "+JogadoresSala[0]->GetName());
-	
-	if (IsValid(Jogador_Detectado))
-	{
-		if (Jogador_Detectado->Vida > 0)
-		{
-			for (int i=0;i < JogadoresSala.Num();i++)
+			JogoFinalizado = true;
+			TempoJogo = 0;
+			GameStateServer->SetTempoJogo(TempoJogo);
+			GameStateServer->SetTimeVencedor();
+			
+			for (int i = 0; i < JogadoresSala.Num(); i++)
 			{
-				if (IsValid(JogadoresSala[i]))
+				AGamePlayController* controle = Cast<AGamePlayController>(JogadoresSala[i]);
+				if (IsValid(controle))
 				{
-					if (JogadoresSala[i] == Jogador_Detectado->GetController())
-					{
-						GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,"Jogador_Detectado "+Jogador_Detectado->GetController()->GetName() + " esse é o indice "+FString::FromInt(i));
+					controle->AtivaHudFimPartida();
+					controle->GetPawn()->Destroy();
+				}
+			}
+			for (TActorIterator<ANPC_Base> It(GetWorld()); It; ++It)
+			{
+				ANPC_Base* NPC = *It;
+		
+				NPC->Destroy();
+			}
+			GetWorldTimerManager().ClearTimer(Contador);
+		}
+	}
+}
 
-						AlvoIndex = i;
-					}
-					else if (JogadoresSala[i] == Inimigo->GetController())
-					{
-						GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,"Inimigo "+Inimigo->GetController()->GetName());
+void ADevLopWarGameMode::DetectaPontosObjetivo()
+{
+	UWorld* World = GetWorld();
+	check(World);
 
-						DonoIndex = i;
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		for (TActorIterator<AObjetivoNPC> It(World); It; ++It)
+		{
+			if (AObjetivoNPC* Objetivo = Cast<AObjetivoNPC>(*It))
+			{
+				if (IsValid(Objetivo))
+				{
+					switch (Objetivo->IndexTerritorio)
+					{
+					case 1:
+						GameStateServer->SetVidaTerritorio1(Objetivo->Vida);
+						GameStateServer->SetDonoTerritorio1(Objetivo->TimeTerritorio);
+						GameStateServer->SetBloqueioTerritorio1(Objetivo->EstaBloqueado);
+						break;
+					case 2:
+						GameStateServer->SetVidaTerritorio2(Objetivo->Vida);
+						GameStateServer->SetDonoTerritorio2(Objetivo->TimeTerritorio);
+						GameStateServer->SetBloqueioTerritorio2(Objetivo->EstaBloqueado);
+						break;
+					case 3:
+						GameStateServer->SetVidaTerritorio3(Objetivo->Vida);
+						GameStateServer->SetDonoTerritorio3(Objetivo->TimeTerritorio);
+						GameStateServer->SetBloqueioTerritorio3(Objetivo->EstaBloqueado);
+						break;
+					case 4:
+						GameStateServer->SetVidaTerritorio4(Objetivo->Vida);
+						GameStateServer->SetDonoTerritorio4(Objetivo->TimeTerritorio);
+						GameStateServer->SetBloqueioTerritorio4(Objetivo->EstaBloqueado);
+						break;
+					default:
+						break;
 					}
 				}
 			}
-			Jogador_Detectado->Vida -= Inimigo->QuantidadeDano;
-				
-			if (Jogador_Detectado->Vida <= 0)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,FString::FromInt(DonoIndex));
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,FString::FromInt(AlvoIndex));
-				AlterarNumJogadoresMortos(DonoIndex);
-				AlterarNumMortes(AlvoIndex);
-			}
 		}
-		Projetil->Destroy();
 	}
+}
 
-	
-	if (IsValid(NPC_Detectado))
+void ADevLopWarGameMode::RetornaLobby_Implementation()
+{
+	GetWorld()->ServerTravel("/Game/Mapas/SalaEsperaPartida?listen");
+}
+
+void ADevLopWarGameMode::ReativaPontosObjetivo_Implementation(int IndexObjetivo, bool EstadoBloqueio)
+{
+	switch (IndexObjetivo)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-												 InimigoDetectado->GetName() + "bala" + GetName());
-		NPC_Detectado->Vida -= 10;
-		Projetil->Destroy();
-	}
-	else if (InimigoDetectado != DonoProjetil)
-	{
-		Projetil->Destroy();
+	case 1:
+		GameStateServer->SetBloqueioTerritorio1(EstadoBloqueio);
+		break;
+	case 2:
+		GameStateServer->SetBloqueioTerritorio2(EstadoBloqueio);
+		break;
+	case 3:
+		GameStateServer->SetBloqueioTerritorio3(EstadoBloqueio);
+		break;
+	case 4:
+		GameStateServer->SetBloqueioTerritorio4(EstadoBloqueio);
+		break;
+	default:
+		break;
 	}
 }
