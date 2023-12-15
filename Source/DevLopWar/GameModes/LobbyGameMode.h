@@ -35,6 +35,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FSala> GeraDados;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool JogoInicializado = false;
+
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
 

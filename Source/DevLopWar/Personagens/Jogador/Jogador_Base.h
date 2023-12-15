@@ -76,13 +76,13 @@ public:
 	TEnumAsByte<TipoPersonagem> PersonagemNPC = Estagiario;
 
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
-	UAnimBlueprint* Estagiario_Anim;
+	UClass* Estagiario_Anim;
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
-	UAnimBlueprint* Pleno_Anim;
+	UClass* Pleno_Anim;
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
-	UAnimBlueprint* Senior_Anim;
+	UClass* Senior_Anim;
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
-	UAnimBlueprint* Chefe_Anim;
+	UClass* Chefe_Anim;
 
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	bool BloqueiaContador = true;
@@ -100,6 +100,8 @@ public:
 
 	UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
 	FRotator RotacaoSocketArma;
+
+	void CarregarAssetsPersonagem();
 
 	void VerificaEscolhaPersonagem();
 	
@@ -149,7 +151,9 @@ protected:
 	void DefineEstadoAtual();
 	void CriaCameraConfig();
 	void CriaPersonagemConfig();
+	void InicializaAttachPersonagem();
 	void CriaProjetil();
+	
 	UFUNCTION(Reliable,Server)
 	void CriaProjetilServidor(FVector Local,FRotator Rotacao);
 

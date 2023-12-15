@@ -25,6 +25,6 @@ AProjetilCsharp::AProjetilCsharp()
 		Projetil->bShouldBounce = false;
 		Projetil->bSimulationEnabled = true;
 		ProjetilMesh->OnComponentBeginOverlap.AddDynamic(this, &AProjetil::InicioDanoColisao);
-		SetReplicates(true);
+		bReplicates = true;
 	}
 }

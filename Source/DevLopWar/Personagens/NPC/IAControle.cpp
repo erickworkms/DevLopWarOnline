@@ -99,18 +99,24 @@ void AIAControle::AdicionaVariaveisIA()
 
 void AIAControle::DetectaPresenca(AActor* Personagem, FAIStimulus estimulo)
 {
-	if (estimulo.Type == 0 && NPC_Ref->InimigoEncontrado == NULL)
+	if (IsValid(NPC_Ref))
 	{
-		AJogador_Base* JogadorPadrao = Cast<AJogador_Base>(Personagem);
-
-		if (JogadorPadrao)
+		if (estimulo.Type == 0 && NPC_Ref->InimigoEncontrado == NULL)
 		{
-			if (!IsValid(NPC_Ref->InimigoEncontrado))
+			AJogador_Base* JogadorPadrao = Cast<AJogador_Base>(Personagem);
+
+			if (JogadorPadrao)
 			{
-				NPC_Ref->InimigoEncontrado = JogadorPadrao;
-				NPC_Ref->GerenciaEscolhaInimigoIA();
+				if (!IsValid(NPC_Ref->InimigoEncontrado))
+				{
+					NPC_Ref->InimigoEncontrado = JogadorPadrao;
+					NPC_Ref->GerenciaEscolhaInimigoIA();
+				}
 			}
 		}
+	}else if (!IsValid(NPC_Ref))
+	{
+		NPC_Ref = Cast<ANPC_Base>(GetPawn());
 	}
 }
 

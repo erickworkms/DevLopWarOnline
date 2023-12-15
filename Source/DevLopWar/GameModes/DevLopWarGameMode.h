@@ -11,6 +11,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Delegates/DelegateSignatureImpl.inl"
 #include "DevLopWar/Controles/GamePlayController.h"
+#include "DevLopWar/Personagens/NPC/ObjetivoNPC.h"
 #include "DevLopWarGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -34,9 +35,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FSala> GeraDados;
 
+	UFUNCTION()
+	int RetornaIndexJogador(AGamePlayController* Controle);
+
 	FTimerHandle Contador;
 
-	FTimerHandle ReviverContador;
+	TArray<FTimerHandle> ReviverContador;
 
 	virtual void BeginPlay() override;
 
@@ -72,9 +76,12 @@ public:
 	UFUNCTION(BlueprintCallable,Reliable,Server)
 	void RetornaLobby();
 
+	UFUNCTION(Reliable,Server)
+	void AtualizaDanoTerritorioNpc(AObjetivoNPC* Territorio_Detectado );
+
 private:
 	UPROPERTY()
-	float TempoJogo = 50;
+	float TempoJogo = 300;
 
 	UPROPERTY()
 	bool JogoFinalizado = false;
@@ -90,8 +97,6 @@ private:
 		
 	UFUNCTION(Reliable,Server)
 	void ContadorTempo();
-
-	
 };
 
 

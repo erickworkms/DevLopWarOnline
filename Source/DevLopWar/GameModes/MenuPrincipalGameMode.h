@@ -41,15 +41,14 @@ public:
 	
 	UFUNCTION()
 	void OnFindSessionsComplete(bool Conectou);
-
-	//UFUNCTION(BlueprintCallable)
+	
 	void ConectaSalaHost(const FOnlineSessionSearchResult& SearchResult);
 
 	void HandleJoinSession(UNetConnection* Conexao);
 
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Reliable,Server,BlueprintCallable)
 	void RetornaBuscar();
 	
 

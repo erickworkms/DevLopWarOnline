@@ -12,6 +12,7 @@
 // Sets default values
 AProjetil::AProjetil()
 {
+	bReplicates = true;
 }
 
 

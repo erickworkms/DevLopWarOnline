@@ -33,6 +33,21 @@ ADevLopWarGameMode::ADevLopWarGameMode()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+int ADevLopWarGameMode::RetornaIndexJogador(AGamePlayController* Controle)
+{
+	for (int i = 0; i < JogadoresSala.Num(); i++)
+	{
+		if (IsValid(JogadoresSala[i]))
+		{
+			if (JogadoresSala[i] == Controle)
+			{
+				return i;
+			}
+		}
+	}
+	return 100;
+}
+
 void ADevLopWarGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -46,6 +61,7 @@ void ADevLopWarGameMode::BeginPlay()
 		JogadoresSala.SetNum(GameInstance->TotalJogadores);
 		InformacaoGameplay.SetNum(GameInstance->TotalJogadores);
 		JogadoresSalaNome = GameInstance->JogadoresSalaNome;
+		ReviverContador.SetNum(GameInstance->TotalJogadores);
 		GetWorldTimerManager().SetTimer(Contador, this, &ADevLopWarGameMode::ContadorTempo, 0.1, true);
 	}
 	DetectaPontosObjetivo();
@@ -106,6 +122,61 @@ void ADevLopWarGameMode::ContadorTempo_Implementation()
 				NPC->Destroy();
 			}
 			GetWorldTimerManager().ClearTimer(Contador);
+		}
+	}
+}
+
+
+void ADevLopWarGameMode::AtualizaDanoTerritorioNpc_Implementation(AObjetivoNPC* Territorio_Detectado)
+{
+	if (Territorio_Detectado->Vida > 0 && Territorio_Detectado->EstaBloqueado == false && !GameStateServer->GetVerificaTerritorioConquistado(Territorio_Detectado->IndexTerritorio,ETime::Clientes))
+	{
+		Territorio_Detectado->Vida -= 10;
+			
+		switch (Territorio_Detectado->IndexTerritorio)
+		{
+		case 1:
+			GameStateServer->SetVidaTerritorio1(Territorio_Detectado->Vida);
+			break;
+		case 2:
+			GameStateServer->SetVidaTerritorio2(Territorio_Detectado->Vida);
+			break;
+		case 3:
+			GameStateServer->SetVidaTerritorio3(Territorio_Detectado->Vida);
+			break;
+		case 4:
+			GameStateServer->SetVidaTerritorio4(Territorio_Detectado->Vida);
+			break;
+		default:
+			break;
+		}
+		if (Territorio_Detectado->Vida <= 0)
+		{
+			Territorio_Detectado->Vida = 100;
+			switch (Territorio_Detectado->IndexTerritorio)
+			{
+			case 1:
+				GameStateServer->SetDonoTerritorio1(ETime::Clientes);
+				GameStateServer->SetVidaTerritorio1(Territorio_Detectado->Vida);
+				break;
+			case 2:
+				GameStateServer->SetDonoTerritorio2(ETime::Clientes);
+				GameStateServer->SetVidaTerritorio2(Territorio_Detectado->Vida);
+				break;
+			case 3:
+				GameStateServer->SetDonoTerritorio3(ETime::Clientes);
+				GameStateServer->SetVidaTerritorio3(Territorio_Detectado->Vida);
+				break;
+			case 4:
+				GameStateServer->SetDonoTerritorio4(ETime::Clientes);
+				GameStateServer->SetVidaTerritorio4(Territorio_Detectado->Vida);
+				break;
+			default:
+				break;
+			}
+			Territorio_Detectado->EstaBloqueado = true;
+			ReativaPontosObjetivo(Territorio_Detectado->IndexTerritorio,Territorio_Detectado->EstaBloqueado);
+			GetWorldTimerManager().SetTimer(Territorio_Detectado->Contador, Territorio_Detectado, &AObjetivoNPC::ContadorTempo, 5, false);
 		}
 	}
 }

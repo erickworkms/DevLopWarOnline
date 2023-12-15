@@ -18,6 +18,7 @@ void AJogador_Base::BeginPlay()
 	Super::BeginPlay();
 	DefinePadroes();
 	VerificaEscolhaPersonagem();
+
 }
 
 void AJogador_Base::Tick(float DeltaTime)

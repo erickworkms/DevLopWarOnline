@@ -19,8 +19,9 @@ AObjetivoNPC::AObjetivoNPC()
 	}
 
 	LocalReferenciaNPC->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	LocalReferenciaNPC->SetCanEverAffectNavigation(false);
 
-	SetReplicates(true);
+	bReplicates = true;
 }
 
 void AObjetivoNPC::ContadorTempo_Implementation()

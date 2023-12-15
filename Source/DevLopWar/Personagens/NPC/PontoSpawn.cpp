@@ -21,5 +21,5 @@ APontoSpawn::APontoSpawn()
 	LocalReferenciaNPC->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	LocalReferenciaNPC->bHiddenInGame = true;
 
-	SetReplicates(true);
+	bReplicates = true;
 }

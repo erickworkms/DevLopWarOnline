@@ -43,7 +43,7 @@ void ADevLopWarGameMode::DanoAtaqueProjetil_Implementation(AActor* DonoProjetil,
 				AGamePlayController* JogadorControle = Cast<AGamePlayController>(JogadoresSala[AlvoIndex]);
 				AlterarNumJogadoresMortos(DonoIndex);
 				AlterarNumMortes(AlvoIndex);
-				GetWorldTimerManager().SetTimer(ReviverContador, JogadorControle, &AGamePlayController::ReviveJogador, 5, false);
+				GetWorldTimerManager().SetTimer(ReviverContador[AlvoIndex], JogadorControle, &AGamePlayController::ReviveJogador, 5, false);
 			}
 		}
 		Projetil->Destroy();
@@ -54,6 +54,11 @@ void ADevLopWarGameMode::DanoAtaqueProjetil_Implementation(AActor* DonoProjetil,
 	{
 		if (NPC_Detectado->Vida > 0)
 		{
+			if (NPC_Detectado->InimigoEncontrado == NULL)
+			{
+				NPC_Detectado->InimigoEncontrado = DonoProjetil;
+				NPC_Detectado->IA_Comportamento = Perseguir_NPC;
+			}
 			for (int i = 0; i < JogadoresSala.Num(); i++)
 			{
 				if (IsValid(JogadoresSala[i]))
@@ -67,6 +72,7 @@ void ADevLopWarGameMode::DanoAtaqueProjetil_Implementation(AActor* DonoProjetil,
 			NPC_Detectado->Vida -= Inimigo->QuantidadeDano;
 			if (NPC_Detectado->Vida <= 0)
 			{
+				NPC_Detectado->ContadorApagaNPC();
 				AlterarNumZumbiesMortos(DonoIndex);
 			}
 		}
@@ -105,8 +111,6 @@ void ADevLopWarGameMode::DanoAtaqueProjetil_Implementation(AActor* DonoProjetil,
 			default:
 				break;
 			}
-			
-			
 			if (Territorio->Vida <= 0)
 			{
 				Territorio->Vida = 100;
@@ -132,6 +136,7 @@ void ADevLopWarGameMode::DanoAtaqueProjetil_Implementation(AActor* DonoProjetil,
 					break;
 				}
 				Territorio->EstaBloqueado = true;
+				
 				ReativaPontosObjetivo(Territorio->IndexTerritorio,Territorio->EstaBloqueado);
 				GetWorldTimerManager().SetTimer(Territorio->Contador, Territorio, &AObjetivoNPC::ContadorTempo, 5, false);
 			}

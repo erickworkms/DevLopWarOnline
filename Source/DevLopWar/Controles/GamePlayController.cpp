@@ -18,22 +18,25 @@ void AGamePlayController::ReviveJogador_Implementation()
 	check(World);
 	
 	AJogador_Base* Jogador = Cast<AJogador_Base>(GetPawn());
-	Jogador->Vida = 100;
-	Jogador->Acao = Nada;
-	
-	if (GetLocalRole() == ROLE_Authority)
+	if (IsValid(Jogador))
 	{
-		TArray<APontoSpawn*> Objetivo;
-		for (TActorIterator<APontoSpawn> It(World); It; ++It)
+		Jogador->Vida = 100;
+		Jogador->Acao = Nada;
+	
+		if (GetLocalRole() == ROLE_Authority)
 		{
-			Objetivo.Add(*It);
-		}
-		if (Objetivo.Num() > 0)
-		{
-			APontoSpawn* ObjetoEscolhido = Objetivo[FMath::RandRange(0, Objetivo.Num() - 1)];
-			FVector Local = ObjetoEscolhido->GetActorLocation();
-			// Jogador->TeleportTo(FVector(Local.X,Local.Y,Local.Z + 50),ObjetoEscolhido->GetActorRotation(),false,true);
-			Jogador->SetActorLocationAndRotation(FVector(Local.X,Local.Y,Local.Z + 50),ObjetoEscolhido->GetActorRotation(), false, nullptr, ETeleportType::TeleportPhysics);
+			TArray<APontoSpawn*> Objetivo;
+			for (TActorIterator<APontoSpawn> It(World); It; ++It)
+			{
+				Objetivo.Add(*It);
+			}
+			if (Objetivo.Num() > 0)
+			{
+				APontoSpawn* ObjetoEscolhido = Objetivo[FMath::RandRange(0, Objetivo.Num() - 1)];
+				FVector Local = ObjetoEscolhido->GetActorLocation();
+				// Jogador->TeleportTo(FVector(Local.X,Local.Y,Local.Z + 50),ObjetoEscolhido->GetActorRotation(),false,true);
+				Jogador->SetActorLocationAndRotation(FVector(Local.X,Local.Y,Local.Z + 50),ObjetoEscolhido->GetActorRotation(), false, nullptr, ETeleportType::TeleportPhysics);
+			}
 		}
 	}
 }

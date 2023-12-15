@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AIController.h"
 #include "IAControle.h"
+#include "AssetRegistryModule.h"
+#include "UObject/ConstructorHelpers.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 #include "Net/UnrealNetwork.h"
@@ -22,11 +24,78 @@ ANPC_Base::ANPC_Base()
 void ANPC_Base::BeginPlay()
 {
 	Super::BeginPlay();
+	InicializaNPC();
+}
+
+inline void ANPC_Base::ContadorApagaNPC_Implementation()
+{
+	FTimerHandle ContadorMorte;
+	GetWorldTimerManager().SetTimer(ContadorMorte, this, &ANPC_Base::ApagaNPC, 5, false);
+}
+
+void ANPC_Base::ApagaNPC_Implementation()
+{
+	Destroy();
+}
+
+void ANPC_Base::ResetaNPC_Implementation()
+{
+	PodeMovimentar = true;
+	Acao = Nada;
+}
+
+void ANPC_Base::InicializaNPC_Implementation()
+{
 	VariaveisIA_BlackBoard = UAIBlueprintHelperLibrary::GetBlackboard(GetController());
 	ControleNPC = Cast<AIAControle>(GetController());
 	VerificaLocalPatrulha();
+	InicializaAttachPersonagem();
 }
 
+void ANPC_Base::InicializaAttachPersonagem_Implementation()
+{
+	DanoAtaque->AttachToComponent(GetMesh(),
+						FAttachmentTransformRules::SnapToTargetIncludingScale, "MaoEsqSoquete");
+	GetCharacterMovement()->bUseRVOAvoidance = true;
+	GetCharacterMovement()->AvoidanceConsiderationRadius = 500;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	GetCharacterMovement()->JumpZVelocity = 600.0f;
+	GetCharacterMovement()->MaxSwimSpeed = 600.0f;
+	GetCharacterMovement()->AirControl = 0.2f;
+	GetCharacterMovement()->SetAvoidanceEnabled(true);
+
+
+	// if (FModuleManager::Get().IsModuleLoaded("AssetRegistry"))
+	// {
+	// 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	//
+	// 	FARFilter Filter;
+	// 	Filter.ClassNames.Add(UAnimBlueprint::StaticClass()->GetFName());
+	//
+	// 	TArray<FAssetData> AssetData;
+	// 	AssetRegistryModule.Get().GetAssets(Filter, AssetData);
+	// 	// GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow,"iniciou passou por aqui");
+	// 	for (const FAssetData& Data : AssetData)
+	// 	{
+	// 		// Acesse informações sobre o animblueprint
+	// 		FString AssetPath = Data.ObjectPath.ToString();
+	// 		// GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow,AssetPath + " passou por aqui no asset");
+	// 		if (AssetPath == "/Game/Personagens/Clientes/Clientes_AnimBlueprint.Clientes_AnimBlueprint")
+	// 		{
+	// 			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow,AssetPath + " passou por aqui no meio =");
+	// 			UAnimBlueprint* animacao = Cast<UAnimBlueprint>(Data.GetAsset());
+	// 			GetMesh()->SetAnimInstanceClass(animacao->GeneratedClass);
+	// 			break;
+	// 		}
+	// 		//UAnimBlueprint* animacao = Cast<UAnimBlueprint>(Data.GetAsset());
+	// 		// 
+	// 		// Faça algo com as informações (por exemplo, armazene em uma lista, imprima no console, etc.)
+	//
+	// 	}
+	// }
+}
 
 void ANPC_Base::Tick(float DeltaTime)
 {
@@ -119,23 +188,26 @@ void ANPC_Base::DefinePadroesVel_Implementation(float valor)
 void ANPC_Base::VerificaPadroes()
 {
 	GetCapsuleComponent()->InitCapsuleSize(29.0f, 76.0f);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn,ECR_Ignore);
 
+	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -75));
+	GetMesh()->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+	GetMesh()->SetWorldScale3D(FVector(0.70f, 0.70f, 0.70f));
+	GetMesh()->SetCollisionResponseToChannel(ECC_Pawn,ECR_Ignore);
+
+	
 	//BaseMesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>
 		MeshContainer(TEXT("SkeletalMesh'/Game/Personagens/Clientes/Mremireh_O_Desbiens.Mremireh_O_Desbiens'"));
 	if (MeshContainer.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(MeshContainer.Object);
-		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -75));
-		GetMesh()->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
-		GetMesh()->SetWorldScale3D(FVector(0.70f, 0.70f, 0.70f));
+	
 	}
-
+	AnimacaoPlayer = "AnimBlueprint'/Game/Personagens/Clientes/Clientes_AnimBlueprint.Clientes_AnimBlueprint_C'";
 	//AnimBlueprint
-	static ConstructorHelpers::FObjectFinder<UAnimBlueprint>
-		AnimBlueprint(
-			TEXT("AnimBlueprint'/Game/Personagens/Clientes/Clientes_AnimBlueprint.Clientes_AnimBlueprint'"));
-	GetMesh()->SetAnimInstanceClass(AnimBlueprint.Object->GeneratedClass);
+	static ConstructorHelpers::FObjectFinder<UClass> AnimacaoEncontrada(*AnimacaoPlayer);
+	GetMesh()->SetAnimInstanceClass(AnimacaoEncontrada.Object);
 
 	//floats
 	Vida = 100;
@@ -150,21 +222,18 @@ void ANPC_Base::VerificaPadroes()
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
-	GetCharacterMovement()->JumpZVelocity = 600.0f;
-	GetCharacterMovement()->MaxSwimSpeed = 600.0f;
-	GetCharacterMovement()->AirControl = 0.2f;
-
+	// GetCharacterMovement()->bOrientRotationToMovement = true;
+	//
+	// GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	// GetCharacterMovement()->JumpZVelocity = 600.0f;
+	// GetCharacterMovement()->MaxSwimSpeed = 600.0f;
+	// GetCharacterMovement()->AirControl = 0.2f;
+	// GetCharacterMovement()->SetAvoidanceEnabled(true);
+	
 	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AIAControle::StaticClass();
 	
-	GetCharacterMovement()->SetAvoidanceEnabled(true);
-	GetCharacterMovement()->bUseRVOAvoidance = true;
-	GetCharacterMovement()->AvoidanceConsiderationRadius = 500;
-
 	DanoAtaque = CreateDefaultSubobject<UBoxComponent>(TEXT("ColisaoAtaque"));
 	DanoAtaque->bFillCollisionUnderneathForNavmesh = false;
 	DanoAtaque->bHiddenInGame = false;
@@ -178,8 +247,6 @@ void ANPC_Base::VerificaPadroes()
 	DanoAtaque->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	DanoAtaque->OnComponentBeginOverlap.AddDynamic(this, &ANPC_Base::InicioDanoColisao);
 	DanoAtaque->OnComponentEndOverlap.AddDynamic(this, &ANPC_Base::FimDanoColisao);
-	DanoAtaque->AttachToComponent(GetMesh(),
-							FAttachmentTransformRules::SnapToTargetIncludingScale, "MaoEsqSoquete");
 }
 
 void ANPC_Base::DefineEstadoAtual_Implementation()
@@ -204,7 +271,10 @@ void ANPC_Base::DefineEstadoAtual_Implementation()
 
 void ANPC_Base::VerificaLocalPatrulha_Implementation()
 {
-	VariaveisIA_BlackBoard->SetValueAsVector("LocalObjetivo", LocalObjetivoPatrulha->GetActorLocation());
+	if (IsValid(VariaveisIA_BlackBoard))
+	{
+		VariaveisIA_BlackBoard->SetValueAsVector("LocalObjetivo", LocalObjetivoPatrulha->GetActorLocation());
+	}
 }
 
 void ANPC_Base::MoverPersonagemPatrulha_Implementation(FVector LocalPatrulha)
@@ -212,8 +282,19 @@ void ANPC_Base::MoverPersonagemPatrulha_Implementation(FVector LocalPatrulha)
 	if (IA_Comportamento == Patrulha_NPC)
 	{
 		VerificaLocalPatrulha();
-		ControleNPC->MoveToLocation(LocalPatrulha, 25, true, true,
-											true, false, 0, false);
+		if (FVector::Dist(LocalPatrulha, GetActorLocation()) >= DistanciaCombate)
+		{
+			ControleNPC->MoveToLocation(LocalPatrulha, 25, true, true,
+												true, false, 0, false);
+			if (FVector::Dist(LocalPatrulha, GetActorLocation()) <= 130 && Acao != Atacar && PodeMovimentar == true)
+			{
+				PodeMovimentar = false;
+				Acao = Atacar;
+				VariaveisIA_BlackBoard->SetValueAsEnum("Acao", Acao);
+				FTimerHandle ContadorLocal;
+				GetWorldTimerManager().SetTimer(ContadorLocal, this, &ANPC_Base::ResetaNPC, 5, false);
+			}
+		}
 	}
 	else if (IA_Comportamento == Perseguir_NPC)
 	{
@@ -231,31 +312,36 @@ void ANPC_Base::MoverPersonagemPatrulha_Implementation(FVector LocalPatrulha)
 			Acao = Atacar;
 			VariaveisIA_BlackBoard->SetValueAsEnum("Acao", Acao);
 			ControleNPC->SetFocus(InimigoEncontrado);
+			FTimerHandle ContadorLocal;
+			GetWorldTimerManager().SetTimer(ContadorLocal, this, &ANPC_Base::ResetaNPC, 5, false);
 		}
 	}
 }
 
 void ANPC_Base::VerificaMetodoComportamento_Implementation()
 {
-	if (Estado == NoChaoAndando)
+	if (IsValid(ControleNPC))
 	{
-		if (IA_Comportamento == Patrulha_NPC)
+		if (Estado == NoChaoAndando)
 		{
-			MoverPersonagemPatrulha(VariaveisIA_BlackBoard->GetValueAsVector("LocalObjetivo"));
-		}
-		if (IA_Comportamento == Perseguir_NPC)
-		{
-			if (IsValid(InimigoEncontrado))
+			if (IA_Comportamento == Patrulha_NPC)
 			{
-				MoverPersonagemPatrulha(InimigoEncontrado->GetActorLocation());
+				MoverPersonagemPatrulha(VariaveisIA_BlackBoard->GetValueAsVector("LocalObjetivo"));
+			}
+			if (IA_Comportamento == Perseguir_NPC)
+			{
+				if (IsValid(InimigoEncontrado))
+				{
+					MoverPersonagemPatrulha(InimigoEncontrado->GetActorLocation());
+				}
 			}
 		}
-	}
-	else{
-		ControleNPC->ClearFocus(EAIFocusPriority::Gameplay);
-		GetCharacterMovement()->StopActiveMovement();
-		ControleNPC->StopMovement();
-		Acao = Nada;
+		else{
+			ControleNPC->ClearFocus(EAIFocusPriority::Gameplay);
+			GetCharacterMovement()->StopActiveMovement();
+			ControleNPC->StopMovement();
+			Acao = Nada;
+		}
 	}
 }
 

@@ -5,7 +5,8 @@
 #include "DevLopWar/GameInstance/DevLopWarGameInstance.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
-#include "OnlineSubsystemUtils.h"
+// #include "OnlineSubsystemUtils.h"
+#include "OnlineSubsystemClasses.h"
 #include "Delegates/DelegateSignatureImpl.inl"
 #include "DevLopWar/GameModes/MenuPrincipalGameMode.h"
 
@@ -20,15 +21,18 @@ void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscol
 		if (SessionInt.IsValid())
 		{
 			// Configurações da sala, como nome, mapa, etc.
-			SessionSettings.bIsLANMatch = true;
+			SessionSettings.bIsLANMatch = false;
+			SessionSettings.BuildUniqueId = true;
 			SessionSettings.bUsesPresence = true;
+			SessionSettings.bUsesStats = true;
+			SessionSettings.bIsDedicated = true;
 			SessionSettings.NumPublicConnections = NumeroJogador;
 			SessionSettings.NumPrivateConnections = 0;
 			SessionSettings.bAllowInvites = true;
 			SessionSettings.bAllowJoinInProgress = true;
 			SessionSettings.bShouldAdvertise = true;
 			SessionSettings.bAllowJoinViaPresence = true;
-			SessionSettings.bAllowJoinViaPresenceFriendsOnly = false;
+			SessionSettings.bAllowJoinViaPresenceFriendsOnly = true;
 			SessionSettings.Settings.Add(FName(TEXT("SessionName")), FVariantData(NomeSala));
 			SessionSettings.Set(NAME_GameSession, FString(NomeSala));
 			switch (CenarioEscolhido)

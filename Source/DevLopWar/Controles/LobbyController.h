@@ -30,13 +30,7 @@ public:
 
 	UFUNCTION(Reliable,Client)
 	void AdicionaDadosInstance(int32 IndexJogador);
-
-	UFUNCTION(Reliable,Client)
-	void VerificaDadosInstance();
-
-	UFUNCTION(BlueprintCallable,Reliable,Client)
-	void AlteraTimeInstance(ETime Time);
-
+	
 	UPROPERTY(Replicated,BlueprintReadWrite)
 	ABaseHudMenuPrincipal* HudChat;
 	

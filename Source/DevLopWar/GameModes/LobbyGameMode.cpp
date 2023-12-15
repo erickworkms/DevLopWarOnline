@@ -61,11 +61,8 @@ void ALobbyGameMode::PostLogin(APlayerController* NovoJogador)
 
 void ALobbyGameMode::IniciaPartida()
 {
-	for (int i = 0;i< JogadoresSala.Num();i++)
-	{
-		ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[i]);
-		Controle->VerificaDadosInstance();
-	}
+	JogoInicializado = true;
+
 	GameInstance->GeraDados = GeraDados;
 	GameInstance->Jogadores = Jogadores;
 	GameInstance->JogadoresSala = JogadoresSala;
@@ -82,7 +79,7 @@ void ALobbyGameMode::VerEntradaLogin()
 void ALobbyGameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
-	if (GetLocalRole() == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority && !JogoInicializado)
 	{
 		for (int i=0;i < JogadoresSala.Num();i++)
 		{

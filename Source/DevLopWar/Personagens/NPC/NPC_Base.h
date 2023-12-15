@@ -9,8 +9,12 @@
 #include "Components/BoxComponent.h"
 #include "DevLopWar/Personagens/Enums/Lista_Enums.h"
 #include "GameFramework/Character.h"
+#include "EngineUtils.h"
 #include "Components/StaticMeshComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "DevLopWar/Controles/GamePlayController.h"
+#include "DevLopWar/GameModes/DevLopWarGameMode.h"
+#include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 #include "NPC_Base.generated.h"
 
 UCLASS()
@@ -52,6 +56,13 @@ public:
 	UBlackboardComponent* VariaveisIA_BlackBoard;
 	UPROPERTY()
 	AAIController* ControleNPC;
+
+	UPROPERTY(Replicated,meta = (AllowPrivateAccess = "true"))
+	FString MeshPlayer;
+	UPROPERTY(Replicated,meta = (AllowPrivateAccess = "true"))
+	FString AnimacaoPlayer;
+	// UPROPERTY(Replicated, meta=(BlueprintProtected = "true"))
+	// UClass* NPC_Anim;
 	
 	void GerenciaEscolhaInimigoIA();
 protected:
@@ -80,7 +91,22 @@ protected:
 	
 	UFUNCTION(Reliable,Server)
 	void GerenciaVisaoPersonagemIA();
-public:	
+public:
+	UFUNCTION(Reliable,Server)
+	void ContadorApagaNPC();
+
+	UFUNCTION(Reliable,Server)
+	void ApagaNPC();
+
+	UFUNCTION(Reliable,Server)
+	void ResetaNPC();
+
+	UFUNCTION(Reliable,Server)
+	void InicializaNPC();
+
+	UFUNCTION(Reliable,NetMulticast)
+	void InicializaAttachPersonagem();
+	
 	virtual void Tick(float DeltaTime) override;
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -92,9 +118,59 @@ public:
 	{
 		if(Acao == Atacar && InimigoDetectado != this)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,
-							  "Nome do inimigo "+InimigoDetectado->GetName());
-	
+			AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+			ADevLopWarGameMode* DevGameMode = Cast<ADevLopWarGameMode>(GameMode);
+			AJogador_Base* Jogador_Detectado = Cast<AJogador_Base>(InimigoDetectado);
+			AObjetivoNPC* Territorio_Detectado = Cast<AObjetivoNPC>(InimigoDetectado);
+			
+			if (IsValid(Jogador_Detectado))
+			{
+				if (Jogador_Detectado->Vida > 0)
+				{				
+					Jogador_Detectado->Vida -= 10;
+					if (Jogador_Detectado->Vida <= 0)
+					{
+						AGamePlayController* Controle = Cast<AGamePlayController>(Jogador_Detectado->GetController());
+						if (IsValid(Controle))
+						{
+							FTimerHandle Contador;
+							GetWorldTimerManager().SetTimer(Contador, Controle, &AGamePlayController::ReviveJogador, 5, false);
+							
+							if (IsValid(GameMode))
+							{
+								if (IsValid(DevGameMode))
+								{
+									int NumeroJogador = DevGameMode->RetornaIndexJogador(Controle);
+									if (NumeroJogador != 100)
+									{
+										DevGameMode->AlterarNumMortes(NumeroJogador);
+									}
+								}
+							}
+						}
+					}
+				}
+			}else if (IsValid(Territorio_Detectado) && IsValid(DevGameMode))
+			{
+				DevGameMode->AtualizaDanoTerritorioNpc(Territorio_Detectado);
+				if (Territorio_Detectado->Vida <= 0)
+				{
+					TArray<AObjetivoNPC*> ListaNpcs;
+					for (TActorIterator<AObjetivoNPC> It(GetWorld()); It; ++It)
+					{
+						if (It->TimeTerritorio != ETime::Clientes)
+						{
+							ListaNpcs.Add(*It);
+						}
+					}
+					if (ListaNpcs.Num() > 0)
+					{
+						LocalObjetivoPatrulha = ListaNpcs[FMath::RandRange(0, ListaNpcs.Num() - 1)];
+						MoverPersonagemPatrulha(LocalObjetivoPatrulha->GetActorLocation());
+					}
+				}
+				
+			}
 		}
 	}
 
@@ -106,3 +182,5 @@ public:
 	}
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
+
+
