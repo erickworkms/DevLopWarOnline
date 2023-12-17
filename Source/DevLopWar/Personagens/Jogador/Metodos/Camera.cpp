@@ -86,11 +86,11 @@ void AJogador_Base::VirarCameraFrenteServidor_Implementation(float valor)
 		{
 			AnguloCameraY = RotacaoCamera * -1;
 
-			if (RotacaoCamera < 49 && valor > 0)
+			if (RotacaoCamera < 35 && valor > 0)
 			{
 				AddControllerPitchInput(valor);
 			}
-			else if (RotacaoCamera > -45 && valor < 0)
+			else if (RotacaoCamera > -35 && valor < 0)
 			{
 				AddControllerPitchInput(valor);
 			}
@@ -124,12 +124,12 @@ void AJogador_Base::VirarCameraLadoServidor_Implementation(float valor)
 	{
 		if (Mirar)
 		{
-			if (AnguloCameraX < 200 && valor < 0)
+			if (AnguloCameraX < 150 && valor < 0)
 			{
 				AnguloCameraX = FVector::DotProduct(GetActorRightVector(), Alvo - GetActorLocation());
 				AddControllerYawInput(valor);
 			}
-			else if (AnguloCameraX > -295 && valor > 0)
+			else if (AnguloCameraX > -250 && valor > 0)
 			{
 				AnguloCameraX = FVector::DotProduct(GetActorRightVector(), Alvo - GetActorLocation());
 				AddControllerYawInput(valor);

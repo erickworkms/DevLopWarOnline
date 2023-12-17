@@ -35,6 +35,7 @@ void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscol
 			SessionSettings.bAllowJoinViaPresenceFriendsOnly = true;
 			SessionSettings.Settings.Add(FName(TEXT("SessionName")), FVariantData(NomeSala));
 			SessionSettings.Set(NAME_GameSession, FString(NomeSala));
+			
 			switch (CenarioEscolhido)
 			{
 			case 0:

@@ -45,9 +45,7 @@ void ASpawnNPC::CriaNPC_Implementation()
 			}
 		}
 		NPC->LocalObjetivoPatrulha = ListaNpcs[FMath::RandRange(0, ListaNpcs.Num() - 1)];
-		NPC->FinishSpawning(FTransform(GetActorRotation(),GetActorLocation()));
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow,NPC->LocalObjetivoPatrulha->GetName() + "  este é o territorio encontrado!");
-	}
+		NPC->FinishSpawning(FTransform(GetActorRotation(),GetActorLocation()));}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow,"  NPCS falhou");

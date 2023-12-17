@@ -6,9 +6,9 @@ public class DevLopWar : ModuleRules
 {
 	public DevLopWar(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "Networking" });
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay","UMG", "Slate", "SlateCore", "OnlineSubsystem","HTTP","Json"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay","UMG", "Slate", "SlateCore", "OnlineSubsystem","HTTP","Json","Sockets"});
 	}
 }

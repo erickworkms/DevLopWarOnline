@@ -65,11 +65,12 @@ void AMenuPrincipalGameMode::OnJoinSessionComplete(FName SessionName, EOnJoinSes
 	}
 }
 
+
 void AMenuPrincipalGameMode::HandleJoinSession(UNetConnection* Conexao)
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	// Obtém o nome do cenário que o servidor deseja carregar
-	FString MapName = "192.168.15.180";
+	FString MapName = "172.27.176.1";
 
 	// Inicia a transição para o novo cenário no cliente
 	PlayerController->ClientTravel(MapName, ETravelType::TRAVEL_Absolute);

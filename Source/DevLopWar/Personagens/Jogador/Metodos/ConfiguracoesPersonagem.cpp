@@ -53,10 +53,6 @@ void AJogador_Base::CriaPersonagemConfig()
 	SetReplicateMovement(true);
 	
 	GetCapsuleComponent()->InitCapsuleSize(29.0f, 76.0f);
-
-	// GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -75));
-	// GetMesh()->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
-	// GetMesh()->SetWorldScale3D(FVector(0.70f, 0.70f, 0.70f));
 	
 	//BaseMesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>
@@ -72,41 +68,8 @@ void AJogador_Base::CriaPersonagemConfig()
 	//AnimBlueprint
 	static ConstructorHelpers::FObjectFinder<UClass> AnimacaoEncontrada(TEXT("AnimBlueprint'/Game/Personagens/Estagiario/Estagiario_AnimBlueprint.Estagiario_AnimBlueprint_C'"));
 	GetMesh()->SetAnimInstanceClass(AnimacaoEncontrada.Object);
-	// //Blueprints de animação
-	// static ConstructorHelpers::FObjectFinder<UAnimBlueprint>
-	// 	EstagiarioContainer(TEXT(
-	// 		"AnimBlueprint'/Game/Personagens/Estagiario/Estagiario_AnimBlueprint.Estagiario_AnimBlueprint'"));
-	// if (EstagiarioContainer.Succeeded())
-	// {
-	// 	Estagiario_Anim = EstagiarioContainer.Object;
-	// }
-	// static ConstructorHelpers::FObjectFinder<UAnimBlueprint>
-	// 	PlenoContainer(TEXT(
-	// 		"AnimBlueprint'/Game/Personagens/Pleno/Pleno_AnimBlueprint.Pleno_AnimBlueprint'"));
-	// if (PlenoContainer.Succeeded())
-	// {
-	// 	Pleno_Anim = PlenoContainer.Object;
-	// }
-	// static ConstructorHelpers::FObjectFinder<UAnimBlueprint>
-	// 	SeniorContainer(TEXT(
-	// 		"AnimBlueprint'/Game/Personagens/Senior/Senior_AnimBlueprint.Senior_AnimBlueprint'"));
-	// if (SeniorContainer.Succeeded())
-	// {
-	// 	Senior_Anim = SeniorContainer.Object;
-	// }
-	// static ConstructorHelpers::FObjectFinder<UAnimBlueprint>
-	// 	ChefeContainer(TEXT(
-	// 		"AnimBlueprint'/Game/Personagens/Chefe/Chefe_AnimBlueprint.Chefe_AnimBlueprint'"));
-	// if (ChefeContainer.Succeeded())
-	// {
-	// 	Chefe_Anim = ChefeContainer.Object;
-	// }
 
-	//Arma
-	// static ConstructorHelpers::FObjectFinder<USkeletalMesh>
-	// 	ArmaContainer(TEXT("SkeletalMesh'/Game/Personagens/Arma/Arma.Arma'"));
 	Arma = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arma"));
-	// Arma->SetSkeletalMesh(ArmaContainer.Object);
 }
 
 void AJogador_Base::InicializaAttachPersonagem()

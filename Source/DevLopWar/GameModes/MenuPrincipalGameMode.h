@@ -11,6 +11,7 @@
 #include "DevLopWar/Huds/BaseHudMenuPrincipal.h"
 #include "DevLopWar/Estruturas/Struct.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "Containers/UnrealString.h" 
 #include "MenuPrincipalGameMode.generated.h"
 
 /**
@@ -35,7 +36,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DeslogarJogador();
 	UFUNCTION(BlueprintCallable)
-	void ProcuraSalaHostLista();
+	void ProcuraSalaHostLista(FString EnderecoIP,int Porta);
 	UFUNCTION(BlueprintCallable)
 	void ConectaSalaID(FName sessao,int32 idPesquisa);
 	
@@ -47,14 +48,15 @@ public:
 	void HandleJoinSession(UNetConnection* Conexao);
 
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	
+	FString GetStringFromConnectionState(ESocketConnectionState ConnectionState);
 
 	UFUNCTION(Reliable,Server,BlueprintCallable)
 	void RetornaBuscar();
 	
-
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
-
+	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:
 	UPROPERTY()

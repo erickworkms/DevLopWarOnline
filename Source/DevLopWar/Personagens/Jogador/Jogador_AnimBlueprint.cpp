@@ -15,8 +15,7 @@ void UJogador_AnimBlueprint::CalculaDirecao(APawn* PersonagemBase)
 	{
 		VelTempAnimacao = FMath::Clamp(Velocidade /
 									   FMath::Clamp(PersonagemBase->GetMovementComponent()->GetMaxSpeed(),
-													0.0f, PersonagemReferencia->VelocidadeMax), 1.f,
-									   5.f);
+													0.0f, PersonagemReferencia->VelocidadeMax), 1.f,5.f);
 	}
 	else
 	{

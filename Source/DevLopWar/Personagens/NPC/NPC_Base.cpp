@@ -8,7 +8,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AIController.h"
 #include "IAControle.h"
-#include "AssetRegistryModule.h"
 #include "UObject/ConstructorHelpers.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
@@ -65,36 +64,6 @@ void ANPC_Base::InicializaAttachPersonagem_Implementation()
 	GetCharacterMovement()->MaxSwimSpeed = 600.0f;
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->SetAvoidanceEnabled(true);
-
-
-	// if (FModuleManager::Get().IsModuleLoaded("AssetRegistry"))
-	// {
-	// 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-	//
-	// 	FARFilter Filter;
-	// 	Filter.ClassNames.Add(UAnimBlueprint::StaticClass()->GetFName());
-	//
-	// 	TArray<FAssetData> AssetData;
-	// 	AssetRegistryModule.Get().GetAssets(Filter, AssetData);
-	// 	// GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow,"iniciou passou por aqui");
-	// 	for (const FAssetData& Data : AssetData)
-	// 	{
-	// 		// Acesse informações sobre o animblueprint
-	// 		FString AssetPath = Data.ObjectPath.ToString();
-	// 		// GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow,AssetPath + " passou por aqui no asset");
-	// 		if (AssetPath == "/Game/Personagens/Clientes/Clientes_AnimBlueprint.Clientes_AnimBlueprint")
-	// 		{
-	// 			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow,AssetPath + " passou por aqui no meio =");
-	// 			UAnimBlueprint* animacao = Cast<UAnimBlueprint>(Data.GetAsset());
-	// 			GetMesh()->SetAnimInstanceClass(animacao->GeneratedClass);
-	// 			break;
-	// 		}
-	// 		//UAnimBlueprint* animacao = Cast<UAnimBlueprint>(Data.GetAsset());
-	// 		// 
-	// 		// Faça algo com as informações (por exemplo, armazene em uma lista, imprima no console, etc.)
-	//
-	// 	}
-	// }
 }
 
 void ANPC_Base::Tick(float DeltaTime)
@@ -221,14 +190,6 @@ void ANPC_Base::VerificaPadroes()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
-
-	// GetCharacterMovement()->bOrientRotationToMovement = true;
-	//
-	// GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
-	// GetCharacterMovement()->JumpZVelocity = 600.0f;
-	// GetCharacterMovement()->MaxSwimSpeed = 600.0f;
-	// GetCharacterMovement()->AirControl = 0.2f;
-	// GetCharacterMovement()->SetAvoidanceEnabled(true);
 	
 	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -285,7 +246,7 @@ void ANPC_Base::MoverPersonagemPatrulha_Implementation(FVector LocalPatrulha)
 		if (FVector::Dist(LocalPatrulha, GetActorLocation()) >= DistanciaCombate)
 		{
 			ControleNPC->MoveToLocation(LocalPatrulha, 25, true, true,
-												true, false, 0, false);
+												false, false, 0, false);
 			if (FVector::Dist(LocalPatrulha, GetActorLocation()) <= 130 && Acao != Atacar && PodeMovimentar == true)
 			{
 				PodeMovimentar = false;
