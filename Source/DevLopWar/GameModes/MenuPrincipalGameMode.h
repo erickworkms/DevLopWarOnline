@@ -32,11 +32,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CriaSalaHost(int32 NumeroJogador,int32 CenarioEscolhido,FString NomeSala);
 	UFUNCTION(BlueprintCallable)
-	void ProcuraSalaHost();
+	void ProcuraSalaHost(FString IPEscolhido, int PortaEscolhida,bool Lan);
 	UFUNCTION(BlueprintCallable)
 	void DeslogarJogador();
 	UFUNCTION(BlueprintCallable)
-	void ProcuraSalaHostLista(FString EnderecoIP,int Porta);
+	void ProcuraSalaHostLista(FString EnderecoIP,int Porta,bool Lan);
 	UFUNCTION(BlueprintCallable)
 	void ConectaSalaID(FName sessao,int32 idPesquisa);
 	
@@ -45,7 +45,7 @@ public:
 	
 	void ConectaSalaHost(const FOnlineSessionSearchResult& SearchResult);
 
-	void HandleJoinSession(UNetConnection* Conexao);
+	void HandleJoinSession();
 
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 	
@@ -56,6 +56,12 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
+
+	FSocket* UDPSocket;
+	
+	const TCHAR* EnderecoIP ;
+	
+	int Porta= 7777;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:

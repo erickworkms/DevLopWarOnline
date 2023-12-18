@@ -31,6 +31,7 @@ ADevLopWarGameMode::ADevLopWarGameMode()
 
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.bCanEverTick = true;
+	bUseSeamlessTravel = true;
 }
 
 int ADevLopWarGameMode::RetornaIndexJogador(AGamePlayController* Controle)
