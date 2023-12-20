@@ -6,6 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "DevLopWar/Estruturas/Struct.h"
+#include "DevLopWar/GameInstance/DevLopWarGameInstance.h"
 #include "DevLopWar/Huds/BaseHudMenuPrincipal.h"
 #include "DevLopWar/RequisicoesRede/RequisicaoHttp.h"
 #include "GameFramework/GameModeBase.h"
@@ -29,6 +30,9 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
+
+	UPROPERTY()
+	UDevLopWarGameInstance* GameInstance;
 private:
 	UFUNCTION(BlueprintCallable)
 	void CriarUsuario(FDadosUsuario DadosUsuario);
@@ -36,4 +40,5 @@ private:
 	void ExecutaLogin(FString Usuario,FString senha);
 	UFUNCTION(BlueprintCallable)
 	void EntraTelaInicial();
+	
 };

@@ -41,6 +41,8 @@ void ALobbyController::BeginPlay()
 	Super::BeginPlay();
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	UDevLopWarGameInstance* PlayerInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
+	Usuario = PlayerInstance->NomeJogador;
 }
 
 void ALobbyController::AdicionaDadosInstance_Implementation(int32 IndexJogador)
@@ -55,6 +57,7 @@ void ALobbyController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ALobbyController, HudChat);
+	DOREPLIFETIME(ALobbyController, Usuario);
 }
 
 void ALobbyController::VerEntradaLogin_Implementation(const TArray<FString>& JogadoresSalaNome)

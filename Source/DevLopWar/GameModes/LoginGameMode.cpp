@@ -32,6 +32,7 @@ void ALoginGameMode::BeginPlay()
 		DefaultPlayerController->DefaultMouseCursor = EMouseCursor::Crosshairs;
 	}
 	ChamadaHttp = NewObject<URequisicaoHttp>();
+	GameInstance = Cast<UDevLopWarGameInstance>(GetWorld()->GetGameInstance());
 }
 
 void ALoginGameMode::CriarUsuario(FDadosUsuario DadosUsuario)
@@ -59,7 +60,8 @@ void ALoginGameMode::ExecutaLogin(FString Usuario, FString senha)
 
 	FString Url = "http://localhost:8080/usuario/verlogin";
 	FString Verb = "POST";
-	
+
+	GameInstance->NomeJogador = Usuario;
 	ChamadaHttp->EnviaRequisicaoHttpParam(Url, Verb, Parametros, hudDetectada, FName("RetornoDadosLogin"));
 }
 

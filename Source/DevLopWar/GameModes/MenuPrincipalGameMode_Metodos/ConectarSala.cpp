@@ -41,13 +41,11 @@ void AMenuPrincipalGameMode::ConectaSalaID(FName sessao,int32 idPesquisa)
 		}
 	}
 }
+
 void AMenuPrincipalGameMode::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
 	if (Result == EOnJoinSessionCompleteResult::Success)
 	{
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		UNetConnection* Connection = PlayerController->GetNetConnection();
-		
 		HandleJoinSession();
 	}
 	else
@@ -69,9 +67,7 @@ void AMenuPrincipalGameMode::OnJoinSessionComplete(FName SessionName, EOnJoinSes
 void AMenuPrincipalGameMode::HandleJoinSession()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	// Obtém o nome do cenário que o servidor deseja carregar
-	FString MapName = "192.168.15.180";
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,"passou no endereço de ip no handlejoint");
+
 	// Inicia a transição para o novo cenário no cliente
-	PlayerController->ClientTravel(EnderecoIP, ETravelType::TRAVEL_Absolute);
+	PlayerController->ClientTravel(EnderecoIPBruto, ETravelType::TRAVEL_Absolute);
 }

@@ -4,6 +4,8 @@
 #include "HttpModule.h"
 #include "DevLopWar/Estruturas/Struct.h"
 
+
+
 void URequisicaoHttp::EnviaRequisicaoHttpJson(const FString& Url, const FString& Verb, const FString& Content,
                                               UObject* CallbackTarget, FName CallbackFunction)
 {
@@ -17,6 +19,31 @@ void URequisicaoHttp::EnviaRequisicaoHttpJson(const FString& Url, const FString&
 	Requisicao->ProcessRequest();
 }
 
+void URequisicaoHttp::EnviaRequisicaoHttpGetHeader(const FString& Url, const FString& Verb, UObject* CallbackTarget,
+	FName CallbackFunction, const FString& Token)
+{
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Requisicao = FHttpModule::Get().CreateRequest();
+	Requisicao->SetURL(Url);
+	Requisicao->SetVerb(Verb);
+	Requisicao->SetHeader("Authorization", Token);
+	Requisicao->OnProcessRequestComplete().BindStatic(&URequisicaoHttp::OnHttpRequestComplete, CallbackTarget,
+													  CallbackFunction);
+	Requisicao->ProcessRequest();
+}
+
+void URequisicaoHttp::EnviaRequisicaoHttpJsonHeader(const FString& Url, const FString& Verb, const FString& Content,
+                                                    UObject* CallbackTarget, FName CallbackFunction,const FString& Token)
+{
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Requisicao = FHttpModule::Get().CreateRequest();
+	Requisicao->SetURL(Url);
+	Requisicao->SetVerb(Verb);
+	Requisicao->SetHeader("Content-Type", "application/json");
+	Requisicao->SetHeader("Authorization", Token);
+	Requisicao->SetContentAsString(Content);
+	Requisicao->OnProcessRequestComplete().BindStatic(&URequisicaoHttp::OnHttpRequestComplete, CallbackTarget,
+													  CallbackFunction);
+	Requisicao->ProcessRequest();
+}
 void URequisicaoHttp::EnviaRequisicaoHttpParam(const FString& Url, const FString& Verb, const FString& Content,
                                                UObject* CallbackTarget, FName CallbackFunction)
 {
@@ -42,6 +69,7 @@ void URequisicaoHttp::OnHttpRequestComplete(FHttpRequestPtr Request, FHttpRespon
 		ResponseData.ResponseContent = Response->GetContentAsString();
 		CallbackParams.conectou = conectou;
 		CallbackParams.RespostaDados = ResponseData;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,ResponseData.ResponseContent);
 		UFunction* Function = CallbackTarget->FindFunction(CallbackFunction);
 		CallbackTarget->ProcessEvent(Function, &CallbackParams);
 	}

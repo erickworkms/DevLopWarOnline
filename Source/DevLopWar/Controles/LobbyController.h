@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DevLopWar/GameInstance/DevLopWarGameInstance.h"
 #include "DevLopWar/Huds/BaseHudMenuPrincipal.h"
 #include "GameFramework/PlayerController.h"
 #include "LobbyController.generated.h"
@@ -33,6 +34,9 @@ public:
 	
 	UPROPERTY(Replicated,BlueprintReadWrite)
 	ABaseHudMenuPrincipal* HudChat;
+
+	UPROPERTY(Replicated)
+	FString Usuario;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:

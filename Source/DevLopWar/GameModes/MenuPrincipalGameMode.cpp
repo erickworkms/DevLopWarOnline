@@ -10,7 +10,6 @@
 #include "Delegates/DelegateSignatureImpl.inl"
 #include "DevLopWar/Estruturas/Struct.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetStringLibrary.h"
 
 
 AMenuPrincipalGameMode::AMenuPrincipalGameMode()
@@ -32,6 +31,7 @@ void AMenuPrincipalGameMode::BeginPlay()
 		Controle->bShowMouseCursor = true;
 		Controle->DefaultMouseCursor = EMouseCursor::Crosshairs;
 		SeuGameInstance = Cast<UDevLopWarGameInstance>(GetWorld()->GetGameInstance());
+		ChamadaHttp = NewObject<URequisicaoHttp>();
 	}
 }
 
@@ -56,9 +56,9 @@ void AMenuPrincipalGameMode::RetornaBuscar_Implementation()
 	GeraDados.SetNum(SessionSearch->SearchResults.Num());
 	for (int i= 0; i < SessionSearch->SearchResults.Num();i++)
 	{
-		GeraDados[i].ip = SessionSearch->SearchResults[i].Session.OwningUserName;
-		GeraDados[i].JogadoresSala =SessionSearch->SearchResults[i].Session.SessionSettings.NumPrivateConnections;
-		GeraDados[i].MaxJogadores = SessionSearch->SearchResults[i].Session.SessionSettings.NumPublicConnections;
+		GeraDados[i].IP = SessionSearch->SearchResults[i].Session.GetSessionIdStr();
+		// GeraDados[i].num =SessionSearch->SearchResults[i].Session.SessionSettings.NumPrivateConnections;
+		// GeraDados[i].MaxJogadores = SessionSearch->SearchResults[i].Session.SessionSettings.NumPublicConnections;
 		// bool confirmacao = SessionSearch->QuerySettings.Get(FName(TEXT("SessionName")), GeraDados[i].NomeSala);
 		SessionSearch->SearchResults[i].Session.SessionSettings.Get(NAME_GameSession, GeraDados[i].NomeSala);
 		SessionSearch->SearchResults[i].Session.SessionSettings.Get(SETTING_MAPNAME, GeraDados[i].Cenario);

@@ -31,7 +31,6 @@ void ASpawnNPC::BeginPlay()
 
 void ASpawnNPC::CriaNPC_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow,"");
 	ANPC_Base* NPC = GetWorld()->SpawnActorDeferred<ANPC_Base>(
 			ANPC_Base::StaticClass(),FTransform(GetActorRotation(),GetActorLocation()));
 	if (NPC)

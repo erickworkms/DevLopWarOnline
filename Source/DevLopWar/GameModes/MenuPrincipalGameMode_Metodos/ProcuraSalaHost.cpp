@@ -19,6 +19,8 @@ void AMenuPrincipalGameMode::ProcuraSalaHost(FString IPEscolhido, int PortaEscol
 {
 	EnderecoIP = *IPEscolhido;
 	Porta = PortaEscolhida;
+	EnderecoIPBruto = IPEscolhido;
+
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
@@ -31,19 +33,17 @@ void AMenuPrincipalGameMode::ProcuraSalaHost(FString IPEscolhido, int PortaEscol
 			{
 				if (Lan)
 				{
-					GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,"passou no nlan");
-
 					SessionSearch = MakeShareable(new FOnlineSessionSearch());
 					SessionSearch->bIsLanQuery = false;
 					SessionSearch->MaxSearchResults = 20;
 					OnFindSessionsCompleteDelegate.BindUFunction(this, FName("OnFindSessionsComplete"));
 					SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
 					SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+				
 				}
 				else
 				{
-					UDPSocket = FTcpSocketBuilder(TEXT("UDPSocket")).AsReusable();
-
+					UDPSocket = FUdpSocketBuilder(TEXT("UDPSocket")).AsReusable();
 					if (UDPSocket)
 					{
 						// Conecta ao servidor
@@ -52,8 +52,8 @@ void AMenuPrincipalGameMode::ProcuraSalaHost(FString IPEscolhido, int PortaEscol
 						FIPv4Endpoint Endpoint(ServidorIP, (uint16)Porta);
 
 
-						UDPSocket->Bind(*SocketSubsystem->CreateInternetAddr(Endpoint.Address.Value, Endpoint.Port));
-						UDPSocket->Listen(5);
+						UDPSocket->Bind(*SocketSubsystem->CreateInternetAddr());
+						UDPSocket->Listen(8);
 
 						if (UDPSocket->Connect(*Endpoint.ToInternetAddr()))
 						{
@@ -63,15 +63,14 @@ void AMenuPrincipalGameMode::ProcuraSalaHost(FString IPEscolhido, int PortaEscol
 							OnFindSessionsCompleteDelegate.BindUFunction(this, FName("OnFindSessionsComplete"));
 							SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
 							SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
-							// UDPSocket->Close();
-							// ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(UDPSocket);
+							UDPSocket->Close();
+							ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(UDPSocket);
 						}
 						else
 						{
 							ESocketConnectionState ConnectionState = UDPSocket->GetConnectionState();
 							FString EstadoConexaoString = GetStringFromConnectionState(ConnectionState);
-
-							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "este é o erro");
+							
 							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, EstadoConexaoString);
 							UDPSocket->Close();
 							ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(UDPSocket);
@@ -103,6 +102,7 @@ void AMenuPrincipalGameMode::ProcuraSalaHostLista(FString IPEscolhido, int Porta
 {
 	EnderecoIP = *IPEscolhido;
 	Porta = PortaEscolhida;
+	EnderecoIPBruto = IPEscolhido;
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
@@ -118,14 +118,13 @@ void AMenuPrincipalGameMode::ProcuraSalaHostLista(FString IPEscolhido, int Porta
 					SessionSearch = MakeShareable(new FOnlineSessionSearch());
 					SessionSearch->bIsLanQuery = true;
 					SessionSearch->MaxSearchResults = 20;
-					OnFindSessionsCompleteDelegate.BindUFunction(hudDetectada, FName("OnFindSessionsComplete"));
+					OnFindSessionsCompleteDelegate.BindUFunction(this, FName("VerificaResultadosBuscaSalas"));
 					SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
 					SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 				}
 				else
 				{
-					UDPSocket = SocketSubsystem->CreateSocket(NAME_Stream, TEXT("TCP"), false);
-					//UDPSocket = FUdpSocketBuilder(TEXT("UDPSocket")).AsReusable();
+					UDPSocket = FUdpSocketBuilder(TEXT("UDPSocket")).AsReusable();
 
 					if (UDPSocket)
 					{
@@ -133,9 +132,8 @@ void AMenuPrincipalGameMode::ProcuraSalaHostLista(FString IPEscolhido, int Porta
 						FIPv4Address ServidorIP;
 						FIPv4Address::Parse(EnderecoIP, ServidorIP);
 						FIPv4Endpoint Endpoint(ServidorIP, Porta);
-
-
-						//UDPSocket->Bind(*SocketSubsystem->CreateInternetAddr(Endpoint.Address.Value,Endpoint.Port));
+						
+						UDPSocket->Bind(*SocketSubsystem->CreateInternetAddr());
 						UDPSocket->Listen(5);
 
 						if (UDPSocket->Connect(*Endpoint.ToInternetAddr()))
@@ -143,18 +141,19 @@ void AMenuPrincipalGameMode::ProcuraSalaHostLista(FString IPEscolhido, int Porta
 							SessionSearch = MakeShareable(new FOnlineSessionSearch());
 							SessionSearch->bIsLanQuery = false;
 							SessionSearch->MaxSearchResults = 20;
-							OnFindSessionsCompleteDelegate.BindUFunction(hudDetectada, FName("OnFindSessionsComplete"));
+							OnFindSessionsCompleteDelegate.BindUFunction(this, FName("VerificaResultadosBuscaSalas"));
 							SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
 							SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
-							// UDPSocket->Close();
-							// ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(UDPSocket);
+							UDPSocket->Close();
+							ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(UDPSocket);
+							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "passou na busca");
+
 						}
 						else
 						{
 							ESocketConnectionState ConnectionState = UDPSocket->GetConnectionState();
 							FString EstadoConexaoString = GetStringFromConnectionState(ConnectionState);
-
-							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "este é o erro");
+							
 							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, EstadoConexaoString);
 							UDPSocket->Close();
 							ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(UDPSocket);
@@ -166,18 +165,31 @@ void AMenuPrincipalGameMode::ProcuraSalaHostLista(FString IPEscolhido, int Porta
 	}
 }
 
+void AMenuPrincipalGameMode::VerificaResultadosBuscaSalas(bool Conectou)
+{
+	if (Conectou)
+	{
+		ProcuraDadosSala();
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "verificou as salas");
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,"Falhou na busca");
+	}
+}
+
 FString AMenuPrincipalGameMode::GetStringFromConnectionState(ESocketConnectionState ConnectionState)
 {
 	switch (ConnectionState)
 	{
 	case SCS_NotConnected:
-		return TEXT("Not Connected");
+		return TEXT("Não Conectou");
 	case SCS_Connected:
-		return TEXT("Connected");
+		return TEXT("Conectou");
 	case SCS_ConnectionError:
-		return TEXT("Connection Error");
+		return TEXT("Erro de Conexao");
 	// Adicione mais casos conforme necessário
 	default:
-		return TEXT("Unknown");
+		return TEXT("Erro Desconhecido");
 	}
 }

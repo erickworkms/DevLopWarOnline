@@ -28,6 +28,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RetornoDadosLogin(bool Conectou,FHttpResponseData RespostasDados);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RetornoSalaServidor(bool Conectou,FSala Sala);
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void RemoveJogador(APlayerController* PlayerController);

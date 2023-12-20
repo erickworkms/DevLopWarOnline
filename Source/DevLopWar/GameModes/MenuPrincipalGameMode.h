@@ -12,6 +12,7 @@
 #include "DevLopWar/Estruturas/Struct.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Containers/UnrealString.h" 
+#include "DevLopWar/RequisicoesRede/RequisicaoHttp.h"
 #include "MenuPrincipalGameMode.generated.h"
 
 /**
@@ -35,13 +36,31 @@ public:
 	void ProcuraSalaHost(FString IPEscolhido, int PortaEscolhida,bool Lan);
 	UFUNCTION(BlueprintCallable)
 	void DeslogarJogador();
+	
 	UFUNCTION(BlueprintCallable)
 	void ProcuraSalaHostLista(FString EnderecoIP,int Porta,bool Lan);
 	UFUNCTION(BlueprintCallable)
+	void VerificaResultadosBuscaSalas(bool Conectou);
+	// UFUNCTION(BlueprintCallable)
+	// void VerificarDadosSalaID(bool Conectou);
+	
+	UFUNCTION(BlueprintCallable)
 	void ConectaSalaID(FName sessao,int32 idPesquisa);
+	UFUNCTION(BlueprintCallable)
+	void SalvaDadosSala(FSala DadosSala);
+	
+	UFUNCTION(BlueprintCallable)
+	void ProcuraDadosSala();
+	UFUNCTION(BlueprintCallable)
+	void RetornaDadosSala(FCallbackParametros CallbackParams);
+	UFUNCTION(BlueprintCallable)
+	void EntrarLobbyCenario(bool Conectou);
 	
 	UFUNCTION()
 	void OnFindSessionsComplete(bool Conectou);
+
+	UPROPERTY(BlueprintReadOnly)
+	URequisicaoHttp* ChamadaHttp;
 	
 	void ConectaSalaHost(const FOnlineSessionSearchResult& SearchResult);
 
@@ -60,8 +79,9 @@ public:
 	FSocket* UDPSocket;
 	
 	const TCHAR* EnderecoIP ;
+	FString EnderecoIPBruto ;
 	
-	int Porta= 7777;
+	int Porta = 7777;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:

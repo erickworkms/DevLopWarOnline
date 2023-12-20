@@ -93,18 +93,30 @@ struct FSala
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
+	FString idSala;
+	
+	UPROPERTY(BlueprintReadWrite)
 	FString NomeSala;
 
 	UPROPERTY(BlueprintReadWrite)
-	FString Cenario;
+	FString MapaIndex;
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 JogadoresSala;
+	FString Cenario;
 	
 	UPROPERTY(BlueprintReadWrite)
-	int32 MaxJogadores;
+	FString IP;
 
 	UPROPERTY(BlueprintReadWrite)
-	FString ip;
+	FString Lan;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString NumeroJogadoresAtivos;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString NumeroJogadoresTotais;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString ServidorDedicado;
 };
 

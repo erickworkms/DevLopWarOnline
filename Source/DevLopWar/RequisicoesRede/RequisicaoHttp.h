@@ -11,6 +11,12 @@ class DEVLOPWAR_API URequisicaoHttp : public UObject
 
 public:
 	UFUNCTION()
+	static void EnviaRequisicaoHttpGetHeader(const FString& Url, const FString& Verb,UObject* CallbackTarget, FName CallbackFunction,const FString& Token);
+	
+	UFUNCTION()
+	static void EnviaRequisicaoHttpJsonHeader(const FString& Url, const FString& Verb, const FString& Content, UObject* CallbackTarget, FName CallbackFunction,const FString& Token);
+	
+	UFUNCTION()
 	static void EnviaRequisicaoHttpJson(const FString& Url, const FString& Verb, const FString& Content, UObject* CallbackTarget, FName CallbackFunction);
 
 	UFUNCTION()

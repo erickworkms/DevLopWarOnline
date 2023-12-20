@@ -49,12 +49,12 @@ void ALobbyGameMode::PostLogin(APlayerController* NovoJogador)
 	Controle->AdicionaDadosInstance(JogadoresSala.Num() - 1);
 	
 	FInformacaoJogador InformacaoJogador;
-	InformacaoJogador.Nome = Controle->GetName();
+	InformacaoJogador.Nome = Controle->Usuario;
 	InformacaoJogador.Time = ETime::Nenhum;
 
 	Jogadores.Add(InformacaoJogador);
 	
-	JogadoresSalaNome.Add(Controle->GetName());
+	JogadoresSalaNome.Add(Controle->Usuario);
 	
 	OnPlayerJoined.Broadcast(NovoJogador);
 }
