@@ -33,7 +33,7 @@ void AMenuPrincipalGameMode::ConectaSalaID(FName sessao,int32 idPesquisa)
 		IOnlineSessionPtr SessionInterface = OnlineSub->GetSessionInterface();
 
 		if (SessionInterface.IsValid())
-		{			
+		{
 			OnJoinSessionCompleteDelegate.BindUObject(this, &AMenuPrincipalGameMode::OnJoinSessionComplete);
 			SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegateHandle);
 			SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
@@ -43,13 +43,14 @@ void AMenuPrincipalGameMode::ConectaSalaID(FName sessao,int32 idPesquisa)
 }
 
 void AMenuPrincipalGameMode::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
-{
+{	
 	if (Result == EOnJoinSessionCompleteResult::Success)
 	{
-		HandleJoinSession();
+		HandleJoinSession(SessionName);
 	}
 	else
 	{
+	
 	}
 	
 	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
@@ -64,10 +65,8 @@ void AMenuPrincipalGameMode::OnJoinSessionComplete(FName SessionName, EOnJoinSes
 }
 
 
-void AMenuPrincipalGameMode::HandleJoinSession()
+void AMenuPrincipalGameMode::HandleJoinSession(FName SessionName)
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-
-	// Inicia a transição para o novo cenário no cliente
 	PlayerController->ClientTravel(EnderecoIPBruto, ETravelType::TRAVEL_Absolute);
 }

@@ -43,8 +43,7 @@ void AJogador_Base::AtivarMira_Pressionado()
 				FRotator(0, CameraRotacaoInicio.Yaw, 0)
 			);
 		
-		GetCapsuleComponent()->SetRelativeRotation(FRotator(0,RotacaoMira,
-															0));
+		GetCapsuleComponent()->SetRelativeRotation(FRotator(0,RotacaoMira,0));
 	
 		SpringArm->TargetArmLength = 70.0f;
 		GetCharacterMovement()->bUseControllerDesiredRotation = false;

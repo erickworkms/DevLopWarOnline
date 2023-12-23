@@ -22,7 +22,6 @@ void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscol
 
 		if (SessionInt.IsValid())
 		{
-			// Configurações da sala, como nome, mapa, etc.
 			SessionSettings.bIsLANMatch = false;
 			SessionSettings.BuildUniqueId = true;
 			SessionSettings.bUsesPresence = true;
@@ -55,18 +54,19 @@ void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscol
 			}
 
 			SessionInt->CreateSession(0, FName(*NomeSala), SessionSettings);
-			SeuGameInstance->SessionSettings = SessionSettings;
-			SeuGameInstance->SessionInt = SessionInt;
+			GameInstance->SessionSettings = SessionSettings;
+			GameInstance->SessionInt = SessionInt;
 			FNamedOnlineSession* DadosSessao = SessionInt->GetNamedSession(*NomeSala);
 			FSala Dados;
 			Dados.idSala = DadosSessao->GetSessionIdStr();
 			Dados.NomeSala = NomeSala;
 			Dados.MapaIndex = FString::FromInt(CenarioEscolhido);
 			Dados.Cenario = "Fase" + FString::FromInt(CenarioEscolhido);
-			
+			Dados.UsuarioCriador = GameInstance->NomeJogador;
 			APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-			Dados.IP = "192.168.0.1";
-			//Dados.IP = "PlayerController->GetNetConnection()->RemoteAddressToString()";
+			//Dados.IP = "192.168.0.1";
+			//Dados.IP = PlayerController->GetNetConnection()->RemoteAddressToString();
+			Dados.IP = GameInstance->ip;
 
 			Dados.Lan = UKismetStringLibrary::Conv_BoolToString(SessionSettings.bIsLANMatch);
 			Dados.NumeroJogadoresAtivos = FString::FromInt(1);
@@ -79,7 +79,6 @@ void AMenuPrincipalGameMode::CriaSalaHost(int32 NumeroJogador,int32 CenarioEscol
 }
 void AMenuPrincipalGameMode::SalvaDadosSala(FSala DadosSala)
 {
-	UDevLopWarGameInstance* GameInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
 	FString Url = "http://localhost:8080/usuario/salvarSala";
 	FString Verb = "POST";
 
@@ -93,6 +92,7 @@ void AMenuPrincipalGameMode::SalvaDadosSala(FSala DadosSala)
 	JsonDados->SetStringField("numeroJogadoresAtivos", DadosSala.NumeroJogadoresAtivos);
 	JsonDados->SetStringField("numeroJogadoresTotais", DadosSala.NumeroJogadoresTotais);
 	JsonDados->SetStringField("servidorDedicado", DadosSala.ServidorDedicado);
+	JsonDados->SetStringField("usuarioCriador", DadosSala.UsuarioCriador);
 
 	FString Conteudo = "";
 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&Conteudo);
@@ -101,6 +101,25 @@ void AMenuPrincipalGameMode::SalvaDadosSala(FSala DadosSala)
 	ChamadaHttp->EnviaRequisicaoHttpJsonHeader(Url, Verb, Conteudo, this, FName("EntrarLobbyCenario"),GameInstance->token);
 }
 
+void AMenuPrincipalGameMode::DeletaDadosSala(FString usuarioCriador)
+{
+	FString Url = "http://localhost:8080/usuario/deletaSalasLobby";
+	FString Verb = "DELETE";
+
+	ChamadaHttp->EnviaRequisicaoHttpJsonHeader(Url, Verb, usuarioCriador, this, FName("RetornaDeleteDadosSala"),GameInstance->token);
+
+}
+
+void AMenuPrincipalGameMode::RetornaDeleteDadosSala(FCallbackParametros CallbackParams)
+{
+	if (CallbackParams.conectou)
+	{
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,"Falhou a criação da sala");
+	}
+}
 
 
 void AMenuPrincipalGameMode::EntrarLobbyCenario(bool Conectou)
@@ -116,7 +135,6 @@ void AMenuPrincipalGameMode::EntrarLobbyCenario(bool Conectou)
 }
 void AMenuPrincipalGameMode::ProcuraDadosSala()
 {
-	UDevLopWarGameInstance* GameInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
 	FString Url = "http://localhost:8080/usuario/verDadosSalas";
 	FString Verb = "GET";
 

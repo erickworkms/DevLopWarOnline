@@ -7,7 +7,7 @@
 #include "DevLopWar/Personagens/Jogador/Jogador_Base.h"
 
 
-void AJogador_Base::DefinePadroesVel(float valor)
+void AJogador_Base::DefinePadroesVel_Implementation(float valor)
 {
 	if (Mirar == true)
 	{

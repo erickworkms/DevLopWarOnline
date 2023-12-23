@@ -35,7 +35,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FSala> GeraDados;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	bool JogoInicializado = false;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -48,8 +48,9 @@ public:
 
 	FOnPlayerJoinedDelegate OnPlayerJoined;
 
+	UFUNCTION()
 	virtual void PostLogin(APlayerController* NewPlayer) override;
-
+	
 	UFUNCTION(BlueprintCallable)
 	void IniciaPartida();
 
@@ -60,6 +61,9 @@ public:
 
 	UFUNCTION()
 	void HandlePlayerJoined(APlayerController* PlayerController);
+	
+	UFUNCTION()
+	void AtrasarControle(ALobbyController* Controle, APlayerController* NovoJogador);
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void EnviarMensagemChat(const FString& mensagem);
@@ -73,10 +77,15 @@ public:
 	UFUNCTION()
 	void TimerHud();
 
+	UFUNCTION(BlueprintCallable,Reliable,Server)
+	void AtualizaListaPlayers();
+
 	UPROPERTY()
 	int ValorIndexUsuarioAtraso=0;
 
 	FTimerHandle Contador;
+	
+	bool VerificaInicioLobby = false;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

@@ -4,6 +4,10 @@
 
 
 #include "LoginGameMode.h"
+
+#include "HttpModule.h"
+#include "SocketSubsystem.h"
+#include "Interfaces/IHttpResponse.h"
 #include "GameFramework/HUD.h"
 #include "Dom/JsonObject.h"
 #include "DevLopWar/RequisicoesRede/RequisicaoHttp.h"
@@ -11,6 +15,7 @@
 #include "Serialization/JsonWriter.h"
 #include "DevLopWar/Huds/BaseHudMenuPrincipal.h"
 #include "Kismet/GameplayStatics.h"
+#include "Misc/OutputDeviceNull.h"
 
 ALoginGameMode::ALoginGameMode()
 {
@@ -33,6 +38,7 @@ void ALoginGameMode::BeginPlay()
 	}
 	ChamadaHttp = NewObject<URequisicaoHttp>();
 	GameInstance = Cast<UDevLopWarGameInstance>(GetWorld()->GetGameInstance());
+	CapturaNumeroIP();
 }
 
 void ALoginGameMode::CriarUsuario(FDadosUsuario DadosUsuario)
@@ -68,4 +74,45 @@ void ALoginGameMode::ExecutaLogin(FString Usuario, FString senha)
 void ALoginGameMode::EntraTelaInicial()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("TelaInicial"));
+}
+
+void ALoginGameMode::CapturaNumeroIP()
+{ // 
+	// TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
+	// TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequestRef(HttpRequest);
+	//
+	// HttpRequest->SetVerb("GET");
+	// HttpRequest->SetURL("https://httpbin.org/ip");
+	// HttpRequest->OnProcessRequestComplete().BindUObject(this, &ALoginGameMode::RetornoCapturaNumeroIP);
+	// HttpRequest->ProcessRequest();
+	
+	FOutputDeviceNull Out;
+	bool bCanBindAll = false;
+	TSharedRef<FInternetAddr> LocalIP = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(Out, bCanBindAll);
+	if (LocalIP->IsValid())
+	{
+		GameInstance->ip = LocalIP->ToString(false);
+		UE_LOG(LogTemp, Warning, TEXT("Endereço IP Local: %s"), *GameInstance->ip);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Falha ao obter o endereço IP local."));
+	}
+}
+//
+void ALoginGameMode::RetornoCapturaNumeroIP(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConectado)
+{
+	if (bConectado && Response.IsValid())
+	{
+		FString EnderecoIPExterno;
+		TSharedPtr<FJsonObject> JsonObject;
+		
+		if (FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Response->GetContentAsString()), JsonObject))
+		{
+			if (JsonObject->TryGetStringField("origin", EnderecoIPExterno))
+			{
+				GameInstance->ip = EnderecoIPExterno;
+			}
+		}
+	}
 }

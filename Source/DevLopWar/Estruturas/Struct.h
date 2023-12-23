@@ -118,5 +118,8 @@ struct FSala
 
 	UPROPERTY(BlueprintReadWrite)
 	FString ServidorDedicado;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString UsuarioCriador;
 };
 

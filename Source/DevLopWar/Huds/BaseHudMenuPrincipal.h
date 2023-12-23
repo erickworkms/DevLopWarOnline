@@ -38,6 +38,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnviaMensagemChat(const FString& mensagem);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 	void AdicionaHudSalas(const TArray<FString>& JogadoresNomes);
 };

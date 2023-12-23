@@ -1,3 +1,7 @@
+//Este projeto foi criado para fins de divulgar conhecimento e pode ser utilizado a vontade.
+
+//This project was created for the purpose of disseminating knowledge and can be used freely.
+
 #include "RequisicaoHttp.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
@@ -69,7 +73,7 @@ void URequisicaoHttp::OnHttpRequestComplete(FHttpRequestPtr Request, FHttpRespon
 		ResponseData.ResponseContent = Response->GetContentAsString();
 		CallbackParams.conectou = conectou;
 		CallbackParams.RespostaDados = ResponseData;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,ResponseData.ResponseContent);
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,ResponseData.ResponseContent);
 		UFunction* Function = CallbackTarget->FindFunction(CallbackFunction);
 		CallbackTarget->ProcessEvent(Function, &CallbackParams);
 	}

@@ -19,7 +19,6 @@ ALobbyGameMode::ALobbyGameMode()
 	{
 		HUDClass = PlayerHUDClass.Class;
 	}
-	//DefaultPawnClass = ADevLopWarCharacter::StaticClass();
 	PlayerControllerClass = ALobbyController::StaticClass();
 	PlayerStateClass = ADevOpPlayerState::StaticClass();
 	bReplicates = true;
@@ -36,26 +35,42 @@ void ALobbyGameMode::BeginPlay()
 		DefaultPlayerController->DefaultMouseCursor = EMouseCursor::Crosshairs;
 
 		GameInstance = Cast<UDevLopWarGameInstance>(GetWorld()->GetGameInstance());
+		VerEntradaLogin();
 	}
+	JogoInicializado = false;
 }
 
 void ALobbyGameMode::PostLogin(APlayerController* NovoJogador)
 {
 	Super::PostLogin(NovoJogador);
-	JogadoresSala.Add(NovoJogador);
 	
 	ALobbyController* Controle = Cast<ALobbyController>(NovoJogador);
-	
-	Controle->AdicionaDadosInstance(JogadoresSala.Num() - 1);
-	
-	FInformacaoJogador InformacaoJogador;
-	InformacaoJogador.Nome = Controle->Usuario;
-	InformacaoJogador.Time = ETime::Nenhum;
 
+	if (!JogoInicializado)
+	{
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindUFunction(this, FName("AtrasarControle"), Controle, NovoJogador);
+
+		FTimerHandle PostLoginTimerHandle;
+		GetWorldTimerManager().SetTimer(PostLoginTimerHandle, TimerDelegate, 0.5f, false);
+	}
+	else
+	{
+		AtrasarControle(Controle,NovoJogador);
+	}
+}
+
+void ALobbyGameMode::AtrasarControle(ALobbyController* Controle, APlayerController* NovoJogador)
+{
+	Controle->AdicionaDadosInstance(JogadoresSala.Num());
+    
+	FInformacaoJogador InformacaoJogador;
+	InformacaoJogador.Nome = Controle->GetUsuario();
+	InformacaoJogador.Time = ETime::Nenhum;
+        
 	Jogadores.Add(InformacaoJogador);
-	
-	JogadoresSalaNome.Add(Controle->Usuario);
-	
+	JogadoresSalaNome.Add(Controle->GetUsuario());
+	JogadoresSala.Add(NovoJogador);
 	OnPlayerJoined.Broadcast(NovoJogador);
 }
 
@@ -119,6 +134,40 @@ void ALobbyGameMode::TimerHud()
 	ALobbyController* Controle = Cast<ALobbyController>(JogadoresSala[ValorIndexUsuarioAtraso]);
 	Controle->VerEntradaLogin(JogadoresSalaNome);
 	GetWorldTimerManager().ClearTimer(Contador);
+}
+
+void ALobbyGameMode::AtualizaListaPlayers_Implementation()
+{
+	UWorld* World = GetWorld();
+	check(World);
+
+	APlayerController* Controle = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	ALobbyController* Servidor = Cast<ALobbyController>(Controle);
+
+	//PostLogin(Controle);
+	TArray<APlayerController*> JogadoresEncontrados;
+	JogadoresEncontrados.Add(Controle);
+	for (FConstControllerIterator it = World->GetControllerIterator(); it; ++it)
+	{
+		if (APlayerController* PlayerController = Cast<APlayerController>(*it))
+			if (IsValid(PlayerController))
+			{
+				ALobbyController* PlayerEncontrado = Cast<ALobbyController>(PlayerController);
+					if (Servidor != PlayerEncontrado)
+					{
+						JogadoresEncontrados.Add(PlayerEncontrado);
+					}					
+			}
+	}
+	TArray<FTimerDelegate> TimerDelegate;
+	TimerDelegate.SetNum(JogadoresEncontrados.Num());
+	TArray<FTimerHandle> PostLoginTimerHandle;
+	PostLoginTimerHandle.SetNum(JogadoresEncontrados.Num());
+	for (int i = 0; i < JogadoresEncontrados.Num();i++)
+	{
+		TimerDelegate[i].BindUFunction(this, FName("PostLogin"), JogadoresEncontrados[i]);
+		GetWorldTimerManager().SetTimer(PostLoginTimerHandle[i], TimerDelegate[i], (0.5f+i)/2, false);
+	}
 }
 
 void ALobbyGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

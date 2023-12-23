@@ -46,8 +46,8 @@ public:
 	FInformacaoJogadorGameplay CriaInformacoesJogador();
 	
 	int RetornaIndexJogador();
-
-	UFUNCTION(Reliable,Server)
+//
+	UFUNCTION(Reliable,NetMulticast)
 	void ReviveJogador();
 	
 	UFUNCTION(BlueprintCallable,Reliable,Server)

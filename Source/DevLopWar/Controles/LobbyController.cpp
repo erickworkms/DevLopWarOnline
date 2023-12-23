@@ -42,7 +42,8 @@ void ALobbyController::BeginPlay()
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 	UDevLopWarGameInstance* PlayerInstance = Cast<UDevLopWarGameInstance>(GetGameInstance());
-	Usuario = PlayerInstance->NomeJogador;
+	SetUsuario(PlayerInstance->NomeJogador);
+	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow,"Criou o controle" + PlayerInstance->NomeJogador);
 }
 
 void ALobbyController::AdicionaDadosInstance_Implementation(int32 IndexJogador)
@@ -51,6 +52,16 @@ void ALobbyController::AdicionaDadosInstance_Implementation(int32 IndexJogador)
 	PlayerInstance->ControleJogador = this;
 	PlayerInstance->IndexJogador = IndexJogador;
 	PlayerInstance->Time = ETime::Agil;
+}
+
+FString ALobbyController::GetUsuario() const
+{
+	return Usuario;
+}
+
+void ALobbyController::SetUsuario_Implementation(const FString& UsuarioSet)
+{
+	Usuario = UsuarioSet;
 }
 
 void ALobbyController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -46,7 +46,6 @@ void AMenuPrincipalGameMode::ProcuraSalaHost(FString IPEscolhido, int PortaEscol
 					UDPSocket = FUdpSocketBuilder(TEXT("UDPSocket")).AsReusable();
 					if (UDPSocket)
 					{
-						// Conecta ao servidor
 						FIPv4Address ServidorIP;
 						FIPv4Address::Parse(EnderecoIP, ServidorIP);
 						FIPv4Endpoint Endpoint(ServidorIP, (uint16)Porta);
@@ -87,7 +86,6 @@ void AMenuPrincipalGameMode::OnFindSessionsComplete(bool Conectou)
 	if (Conectou)
 	{
 		FoundSessions = SessionSearch->SearchResults;
-		// Verificar se há resultados de pesquisa antes de chamar a função de conexão
 		if (SessionSearch->SearchResults.Num() > 0)
 		{
 			ConectaSalaHost(SessionSearch->SearchResults[0]);
@@ -146,8 +144,6 @@ void AMenuPrincipalGameMode::ProcuraSalaHostLista(FString IPEscolhido, int Porta
 							SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 							UDPSocket->Close();
 							ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(UDPSocket);
-							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "passou na busca");
-
 						}
 						else
 						{
@@ -170,7 +166,6 @@ void AMenuPrincipalGameMode::VerificaResultadosBuscaSalas(bool Conectou)
 	if (Conectou)
 	{
 		ProcuraDadosSala();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "verificou as salas");
 	}
 	else
 	{
@@ -188,7 +183,6 @@ FString AMenuPrincipalGameMode::GetStringFromConnectionState(ESocketConnectionSt
 		return TEXT("Conectou");
 	case SCS_ConnectionError:
 		return TEXT("Erro de Conexao");
-	// Adicione mais casos conforme necessário
 	default:
 		return TEXT("Erro Desconhecido");
 	}

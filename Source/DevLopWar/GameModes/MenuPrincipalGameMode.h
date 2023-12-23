@@ -13,11 +13,9 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Containers/UnrealString.h" 
 #include "DevLopWar/RequisicoesRede/RequisicaoHttp.h"
+#include "Engine/Engine.h"
 #include "MenuPrincipalGameMode.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DEVLOPWAR_API AMenuPrincipalGameMode : public AGameModeBase
 {
@@ -48,6 +46,11 @@ public:
 	void ConectaSalaID(FName sessao,int32 idPesquisa);
 	UFUNCTION(BlueprintCallable)
 	void SalvaDadosSala(FSala DadosSala);
+	UFUNCTION()
+	void DeletaDadosSala(FString usuarioCriador);
+	UFUNCTION()
+	void RetornaDeleteDadosSala(FCallbackParametros CallbackParams);
+	
 	
 	UFUNCTION(BlueprintCallable)
 	void ProcuraDadosSala();
@@ -64,15 +67,12 @@ public:
 	
 	void ConectaSalaHost(const FOnlineSessionSearchResult& SearchResult);
 
-	void HandleJoinSession();
+	void HandleJoinSession(FName SessionName);
 
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 	
 	FString GetStringFromConnectionState(ESocketConnectionState ConnectionState);
-
-	UFUNCTION(Reliable,Server,BlueprintCallable)
-	void RetornaBuscar();
-	
+		
 	UPROPERTY(BlueprintReadWrite)
 	ABaseHudMenuPrincipal* hudDetectada;
 
@@ -84,9 +84,11 @@ public:
 	int Porta = 7777;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
 private:
 	UPROPERTY()
-	UDevLopWarGameInstance* SeuGameInstance;
+	UDevLopWarGameInstance* GameInstance;
 	
 	FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
 	

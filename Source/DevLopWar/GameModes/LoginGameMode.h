@@ -12,9 +12,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "LoginGameMode.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DEVLOPWAR_API ALoginGameMode : public AGameModeBase
 {
@@ -40,5 +37,8 @@ private:
 	void ExecutaLogin(FString Usuario,FString senha);
 	UFUNCTION(BlueprintCallable)
 	void EntraTelaInicial();
+	UFUNCTION()
+	void CapturaNumeroIP();
 	
+	void RetornoCapturaNumeroIP(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConectado);
 };

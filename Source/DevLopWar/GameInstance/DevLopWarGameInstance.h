@@ -29,13 +29,15 @@ public:
 	
 	UPROPERTY(Replicated,BlueprintReadWrite)
 	ETime Time;
-
 	
 	UPROPERTY(BlueprintReadWrite)
 	FString token;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString ip;
 	
 	UPROPERTY(BlueprintReadWrite)
-	FString NomeJogador;
+	FString NomeJogador = "Server";
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FSala> GeraDados;
