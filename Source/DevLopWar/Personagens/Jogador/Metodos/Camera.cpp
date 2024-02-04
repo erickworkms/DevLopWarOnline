@@ -56,7 +56,6 @@ void AJogador_Base::VirarCameraLado(float valor)
 	{
 		if (Mirar)
 		{
-			
 			if (AnguloCameraX < 200 && valor < 0)
 			{
 				AnguloCameraX = FVector::DotProduct(GetActorRightVector(), Alvo - GetActorLocation());

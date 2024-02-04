@@ -48,7 +48,6 @@ void AJogador_Base::VerificaMeshPersonagem(float Index)
 }
 void AJogador_Base::CriaPersonagemConfig()
 {
-	
 	bReplicates = true;
 	SetReplicateMovement(true);
 	

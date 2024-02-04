@@ -81,7 +81,7 @@ public:
 
 private:
 	UPROPERTY()
-	float TempoJogo = 50;
+	float TempoJogo = 300;
 
 	UPROPERTY()
 	bool JogoFinalizado = false;

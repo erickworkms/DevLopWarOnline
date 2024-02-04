@@ -124,7 +124,7 @@ protected:
 	void VirarCameraFrenteServidor(float valor);
 	UFUNCTION(Reliable,Server)
 	void VirarCameraLadoServidor(float valor);
-	UFUNCTION(Reliable,Server)
+	UFUNCTION(Reliable,NetMulticast)
 	void DefinePadroesVel(float valor);
 
 	//Botões apertados
